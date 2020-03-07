@@ -6,15 +6,30 @@ import time
 
 class FA:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound):
+        '''
+
+        :param D:
+        :param N:
+        :param Beta0:
+        :param gama:
+        :param alpha:
+        :param T:
+        :param bound:  I think is the bound
+        '''
+
         self.D = D  # 问题维数
         self.N = N  # 群体大小
         self.Beta0 = Beta0  # 最大吸引度
         self.gama = gama  # 光吸收系数
         self.alpha = alpha  # 步长因子
         self.T = T
-        self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]
+
+        self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]    #我觉得是初始化
         self.X_origin = copy.deepcopy(self.X)
-        self.FitnessValue = np.zeros(N)
+        """
+        copy function is used to  copy list   
+        """
+        self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个数组
         for n in range(N):
             self.FitnessValue[n] = self.FitnessFunction(n)
 
@@ -31,10 +46,10 @@ class FA:
                        self.alpha * (np.random.rand(self.D) - 0.5)
 
     def FitnessFunction(self, i):
-        x_ = self.X[i, :]
-        return np.linalg.norm(x_) ** 2
+        x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
+        return np.linalg.norm(x_) ** 2     #np.linalg.norm(求范数)
 
-    def iterate(self):
+    def iterate(self):  #迭代
         t = 0
         while t < self.T:
             for i in range(self.N):
