@@ -1,4 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-print(np.random.random([2,3]))
+
+np.zeros(10)
+# print(np.zeros(10),)

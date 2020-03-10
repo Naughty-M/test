@@ -27,6 +27,9 @@ class FAIndividual:
             self.chrom[i] = self.bound[0, i] + \
                             (self.bound[1, i] - self.bound[0, i]) * rnd[i]
 
+        # print(self.chrom)   #答应
+        # print(self.chrom.type())
+
     def calculateFitness(self):
         '''
         calculate the fitness of the chromsome

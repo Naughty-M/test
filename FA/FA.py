@@ -4,6 +4,9 @@ import random
 import copy
 import matplotlib.pyplot as plt
 
+import plot
+
+
 
 class FireflyAlgorithm:
     '''
@@ -103,6 +106,26 @@ class FireflyAlgorithm:
                             self.population[i].chrom[k] = self.bound[1, k]
                     self.population[i].calculateFitness()
                     self.fitness[i] = self.population[i].fitness
+
+
+        l = [np.array(self.population[0].chrom)]
+        # l = l.append()
+        # print(np.array(self.population[0].chrom))
+        # print(l)
+
+        temp=np.asarray(l)
+
+        for i in range(1, self.sizepop):
+            # print([np.array(self.population[i].chrom)])
+           temp =  np.append(temp,[np.array(self.population[i].chrom)],axis=0)
+
+
+        plt.scatter(temp[:,0],temp[:,1], c='r')
+        plt.pause(0.1)
+        plt.clf()
+        #         pass
+        # print(self.population.type())
+
 
     def printResult(self):
         '''

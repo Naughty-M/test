@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import copy
 import time
+from functools import singledispatch   #重载函数
 
 
 class FA:
@@ -26,37 +27,41 @@ class FA:
 
         self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]    #我觉得是初始化
 
-        # print(self.X)
-        # f = open("test.txt","a")
-        # f.write(self.X)
-        # f.close()
         self.X_origin = copy.deepcopy(self.X)
         """
         copy function is used to  copy list   
         """
-        self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个数组
+        self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个 浮点0【0.,0.,0.,0,.0,.0,.0,.0.】数组
         for n in range(N):
             self.FitnessValue[n] = self.FitnessFunction(n)
 
+    def adjust_alphat(self, t):
+        self.alpha = (1 - t / self.T) * self.alpha # 自适应步长
+
+
+
     def DistanceBetweenIJ(self, i, j):
-        return np.linalg.norm(self.X[i, :] - self.X[j, :])
+        return np.linalg.norm(self.X[i, :] - self.X[j, :])   #求范数    距离  OK
 
     def BetaIJ(self, i, j):  # AttractionBetweenIJ
         return self.Beta0 * \
-               np.math.exp(-self.gama * (self.DistanceBetweenIJ(i, j) ** 2))
+               np.math.exp(-self.gama * (self.DistanceBetweenIJ(i, j) ** 2))    #吸引度
 
     def update(self, i, j):
+
         self.X[i, :] = self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_) ** 2     #np.linalg.norm(求范数)
+        return np.linalg.norm(x_) ** 2     #np.linalg.norm(求范数)   **乘方
 
-    def iterate(self):  #迭代
+    def iterate(self):  #迭代     move
         t = 0
         while t < self.T:
+            # self.adjust_alphat(t)
+
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
                 for j in range(self.N):
@@ -65,28 +70,49 @@ class FA:
                         self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
+            # plot(self.X)  #test
+            # print(t)
             t += 1
+
 
     def find_min(self):
         v = np.min(self.FitnessValue)
-        n = np.argmin(self.FitnessValue)
+        n = np.argmin(self.FitnessValue)      #返回最小索引
         return v, self.X[n, :]
 
+    def np_sort(self):
 
+        self.FitnessValue = np.sort(self.FitnessValue)
+
+@
 def plot(X_origin, X):
+    @plot().re
     fig_origin = plt.figure(0)
     plt.xlabel('x')
     plt.ylabel('y')
     plt.scatter(X_origin[:, 0], X_origin[:, 1], c='r')
     plt.scatter(X[:, 0], X[:, 1], c='g')
-    plt.show()
+    plt.pause(0.1)
+    plt.clf()
+
+def plot(X):
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.scatter(X[:, 0], X[:, 1], c='g')
+    plt.pause(0.5)
+    plt.clf()
+
 
 
 if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 20, 1, 0.000001, 0.97, 100, [-100, 100])
+        fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100])
+        # print(fa.FitnessValue)
+        # fa.np_sort()
+        # print(fa.FitnessValue)
+
         time_start = time.time()
         fa.iterate()
         time_end = time.time()
