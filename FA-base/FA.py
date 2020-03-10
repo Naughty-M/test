@@ -84,9 +84,7 @@ class FA:
 
         self.FitnessValue = np.sort(self.FitnessValue)
 
-@
 def plot(X_origin, X):
-    @plot().re
     fig_origin = plt.figure(0)
     plt.xlabel('x')
     plt.ylabel('y')
