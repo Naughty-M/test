@@ -74,7 +74,7 @@ class FA:
             # print(t)
             t += 1
 
-as
+
     def find_min(self):
         v = np.min(self.FitnessValue)
         n = np.argmin(self.FitnessValue)      #返回最小索引
