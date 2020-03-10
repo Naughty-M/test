@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import matplotlib.pyplot as plt
 from FA import FA
@@ -7,22 +9,29 @@ np.zeros(10)
 
 if __name__ == '__main__':
     t = np.zeros(10)
-    value = np.zeros(10)  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
-    for i in range(1):
-        fa = FA(2, 20, 1, 0.000001, 0.97, 50, [-100, 100])
-        # fa.show_data()
-        # print(fa.np_sort())
-        # fa.iterate()
+    value = np.zeros(10)
+    for i in range(10):
+        fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100],3)
+        time_start = time.time()
+        fa.iterate()
+        time_end = time.time()
+        t[i] = time_end - time_start
+        value[i], n = fa.find_min()
+print("平均值：", np.average(value))
+print("最优值：", np.min(value))
+print("最差值：", np.max(value))
+print("平均时间：", np.average(t))
 
-        centroids, clusterAssment=mean.KMeans(fa.X,3,fa.FitnessValue)
-        # list =
-        mean.showCluster(fa.X,3,centroids,clusterAssment)
+
+
+        #k-means
+        # centroids, clusterAssment=mean.KMeans(fa.X,3,fa.FitnessValue)
+        # # list =
+        # mean.showCluster(fa.X,3,centroids,clusterAssment)
 
 #K-means
 
 
-    # dataSet = 0
-    # k = 4
-    # centroids, clusterAssment = KMeans(dataSet, k)
+
 
 

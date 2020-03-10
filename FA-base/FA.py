@@ -6,7 +6,7 @@ from functools import singledispatch   #重载函数
 import K_means as mean
 
 class FA:
-    def __init__(self, D, N, Beta0, gama, alpha, T, bound):
+    def __init__(self, D, N, Beta0, gama, alpha, T, bound,mean):
         '''
 
         :param D:群体大小
@@ -61,7 +61,7 @@ class FA:
     def iterate(self):  #迭代     move
         t = 0
         while t < self.T:     #迭代代数
-            # self.adjust_alphat(t)
+            self.adjust_alphat(t)   #自适应步长
 
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
@@ -71,6 +71,9 @@ class FA:
                         self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
+
+            # self.K_mean_Plot()
+            # Fly_plot(self.X)
             t += 1
 
 
@@ -97,7 +100,7 @@ class FA:
 
     def K_mean_Plot(self):
         centroids, clusterAssment = mean.KMeans(self.X, self.mean, self.FitnessValue)
-        mean.showCluster(self.X, 3, centroids, clusterAssment)
+        # mean.showCluster(self.X, self.mean, centroids, clusterAssment)
 
 
 def plot(X_origin, X):
@@ -113,8 +116,9 @@ def Fly_plot(X):    #萤火虫轨迹
     plt.xlabel('x')
     plt.ylabel('y')
     plt.scatter(X[:, 0], X[:, 1], c='g')
-    plt.pause(0.5)
-    plt.clf()
+    #
+    # plt.pause(0.005)
+    # plt.clf()
 
 
 

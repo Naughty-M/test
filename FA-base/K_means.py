@@ -45,7 +45,7 @@ def KMeans(dataSet, k,Fitness):
     # centroids = randCent(dataSet, k)
 
     centroids =set_Cent(dataSet,k,Fitness) #中心聚类
-    print("da")
+    # print("da")
     while clusterChange:
         clusterChange = False
 
@@ -66,12 +66,13 @@ def KMeans(dataSet, k,Fitness):
             if clusterAssment[i, 0] != minIndex:
                 clusterChange = True
                 clusterAssment[i, :] = minIndex, minDist ** 2
-        # 第 4 步：更新质心
-        for j in range(k):
-            pointsInCluster = dataSet[np.nonzero(clusterAssment[:, 0].A == j)[0]]  # 获取簇类所有的点
-            centroids[j, :] = np.mean(pointsInCluster, axis=0)  # 对矩阵的行求均值
 
-    print("Congratulations,cluster complete!")
+        # 第 4 步：更新质心  我取消了
+        # for j in range(k):
+        #     pointsInCluster = dataSet[np.nonzero(clusterAssment[:, 0].A == j)[0]]  # 获取簇类所有的点
+        #     centroids[j, :] = np.mean(pointsInCluster, axis=0)  # 对矩阵的行求均值
+
+    # print("Congratulations,cluster complete!")
     return centroids, clusterAssment
 
 
@@ -96,7 +97,8 @@ def showCluster(dataSet, k, centroids, clusterAssment):
     for i in range(k):
         plt.plot(centroids[i, 0], centroids[i, 1], mark[i])
 
-    plt.show()
+    # plt.pause(0.5)
+    # plt.clf()
 
 
 
