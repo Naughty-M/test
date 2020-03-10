@@ -59,7 +59,7 @@ class FA:
 
     def iterate(self):  #迭代     move
         t = 0
-        while t < self.T:
+        while t < self.T:     #迭代代数
             # self.adjust_alphat(t)
 
             for i in range(self.N):
@@ -70,9 +70,8 @@ class FA:
                         self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
-            # plot(self.X)  #test
-            # print(t)
             t += 1
+
 
 
     def find_min(self):
@@ -82,7 +81,19 @@ class FA:
 
     def np_sort(self):
 
-        self.FitnessValue = np.sort(self.FitnessValue)
+        return np.argsort(-self.FitnessValue)
+
+
+
+    def show_data(self):
+        i = 0
+        while i<self.N:
+            print(i)
+            print(self.FitnessValue[i])
+            print(self.X[i,:])
+            print("****")
+            i+=1
+
 
 def plot(X_origin, X):
     fig_origin = plt.figure(0)
@@ -93,7 +104,7 @@ def plot(X_origin, X):
     plt.pause(0.1)
     plt.clf()
 
-def plot(X):
+def Fly_plot(X):    #萤火虫轨迹
     plt.xlabel('x')
     plt.ylabel('y')
     plt.scatter(X[:, 0], X[:, 1], c='g')
@@ -106,10 +117,12 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100])
+        fa = FA(2, 20, 1, 0.000001, 0.97, 50, [-100, 100])
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
+
+
 
         time_start = time.time()
         fa.iterate()
