@@ -22,9 +22,19 @@ def randCent(dataSet, k):
         centroids[i, :] = dataSet[index, :]
     return centroids
 
+# 为给定数据集构建一个包含K个质心的集合
+def set_Cent(dataSet,k,Fitness):
+    m, n = dataSet.shape
+    centroids = np.zeros((k, n))
+    list = np.argsort(-Fitness)    #取前几的质心
+    for i in range(k):
+        index=list[i] #
+        centroids[i, :] = dataSet[index, :]
+    return centroids
+
 
 # k均值聚类
-def KMeans(dataSet, k):
+def KMeans(dataSet, k,Fitness):
     m = np.shape(dataSet)[0]  # 行的数目
     # 第一列存样本属于哪一簇
     # 第二列存样本的到簇的中心点的误差
@@ -32,7 +42,10 @@ def KMeans(dataSet, k):
     clusterChange = True
 
     # 第1步 初始化centroids
-    centroids = randCent(dataSet, k)
+    # centroids = randCent(dataSet, k)
+
+    centroids =set_Cent(dataSet,k,Fitness) #中心聚类
+    print("da")
     while clusterChange:
         clusterChange = False
 

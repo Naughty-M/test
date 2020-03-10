@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import copy
 import time
 from functools import singledispatch   #重载函数
-
+import K_means as mean
 
 class FA:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound):
@@ -24,6 +24,7 @@ class FA:
         self.gama = gama  # 光吸收系数
         self.alpha = alpha  # 步长因子
         self.T = T
+        self.mean = mean  #聚类长度
 
         self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]    #我觉得是初始化
 
@@ -94,6 +95,10 @@ class FA:
             print("****")
             i+=1
 
+    def K_mean_Plot(self):
+        centroids, clusterAssment = mean.KMeans(self.X, self.mean, self.FitnessValue)
+        mean.showCluster(self.X, 3, centroids, clusterAssment)
+
 
 def plot(X_origin, X):
     fig_origin = plt.figure(0)
@@ -110,6 +115,8 @@ def Fly_plot(X):    #萤火虫轨迹
     plt.scatter(X[:, 0], X[:, 1], c='g')
     plt.pause(0.5)
     plt.clf()
+
+
 
 
 
