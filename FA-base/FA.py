@@ -72,7 +72,7 @@ class FA:
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
 
-            # self.K_mean_Plot()
+            self.K_mean_Plot()
             # Fly_plot(self.X)
             t += 1
 

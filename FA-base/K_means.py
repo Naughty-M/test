@@ -22,6 +22,10 @@ def randCent(dataSet, k):
         centroids[i, :] = dataSet[index, :]
     return centroids
 
+def Return_List(dataSet,Fitness):  #返回序号
+
+    return np.argsort(-Fitness) ;
+
 # 为给定数据集构建一个包含K个质心的集合
 def set_Cent(dataSet,k,Fitness):
     m, n = dataSet.shape
@@ -36,6 +40,7 @@ def set_Cent(dataSet,k,Fitness):
 # k均值聚类
 def KMeans(dataSet, k,Fitness):
     m = np.shape(dataSet)[0]  # 行的数目
+
     # 第一列存样本属于哪一簇
     # 第二列存样本的到簇的中心点的误差
     clusterAssment = np.mat(np.zeros((m, 2)))
@@ -73,6 +78,11 @@ def KMeans(dataSet, k,Fitness):
         #     centroids[j, :] = np.mean(pointsInCluster, axis=0)  # 对矩阵的行求均值
 
     # print("Congratulations,cluster complete!")
+    print(centroids)# 质心集合
+
+    # print(clusterAssment)
+
+    print("************")
     return centroids, clusterAssment
 
 
