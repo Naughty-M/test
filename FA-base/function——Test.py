@@ -1,4 +1,5 @@
 import numpy as np
 
 
-print(np.zeros((1,2,3)))
+list = [1,3,4,5]
+print(3 in list)

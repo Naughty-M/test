@@ -5,6 +5,7 @@ import time
 from functools import singledispatch   #重载函数
 import K_means as mean
 
+
 class FA:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound,mean):
         '''
@@ -25,6 +26,7 @@ class FA:
         self.alpha = alpha  # 步长因子
         self.T = T
         self.mean = mean  #聚类长度
+        self.bound  = bound
 
         self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]    #我觉得是初始化
 
@@ -36,10 +38,9 @@ class FA:
         for n in range(N):
             self.FitnessValue[n] = self.FitnessFunction(n)
 
-    def adjust_alphat(self, t):
-        self.alpha = (1 - t / self.T) * self.alpha # 自适应步长
-
-
+    def adjust_alphat(self, t,i,j):
+        if self.DistanceBetweenIJ(i,j)<self.alpha:
+            self.alpha = (1 - t / self.T) * self.alpha  # 自适应步长
 
     def DistanceBetweenIJ(self, i, j):
         return np.linalg.norm(self.X[i, :] - self.X[j, :])   #求范数    距离  OK
@@ -52,7 +53,13 @@ class FA:
 
         self.X[i, :] = self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
-                       self.alpha * (np.random.rand(self.D) - 0.5)
+                       self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
+
+
+    def update_neighboru(self,i,j):
+       self.X[i, :] = self.X[i, :] + \
+                      self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :])*np.random.rand(self.D) + \
+                      self.alpha * (np.linalg.norm(self.X[i,:]-self.X[j,:])) / (self.bound[1]-self.bound[0])
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
@@ -60,14 +67,18 @@ class FA:
 
     def iterate(self):  #迭代     move
         t = 0
-        while t < self.T:     #迭代代数
-            self.adjust_alphat(t)   #自适应步长
+        list = np.argsort(-self.FitnessValue)
 
+        while t < self.T:     #迭代代数
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
+                if(i in list):
+                    print("hahah")
                 for j in range(self.N):
+                    self.adjust_alphat(t,i,j)  #自适应步长
                     FFj = self.FitnessValue[j]
                     if FFj < FFi:
+                        # self.update_neighboru(i,j)
                         self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
@@ -77,14 +88,12 @@ class FA:
             t += 1
 
 
-
     def find_min(self):
         v = np.min(self.FitnessValue)
         n = np.argmin(self.FitnessValue)      #返回最小索引
         return v, self.X[n, :]
 
     def np_sort(self):
-
         return np.argsort(-self.FitnessValue)
 
 
@@ -102,7 +111,22 @@ class FA:
         centroids, clusterAssment = mean.KMeans(self.X, self.mean, self.FitnessValue)
         # mean.showCluster(self.X, self.mean, centroids, clusterAssment)
 
+    # def Neighbour(self, X):
+    #     t = 0
+    #     list = np.argsort(-self.FitnessValue)
+    #     while t < self.T:  # 迭代代数
+    #         self.adjust_alphat(t)  # 自适应步长
+    #         for i in list:
+    #             FFi = self.FitnessValue[i]
+    #             for j in list:
+    #                 FFj = self.FitnessValue[j]
+    #                 if FFj < FFi:
+    #                     self.update_neighboru(i, j)
+    #                     self.FitnessValue[i] = self.FitnessFunction(i)
+    #                     FFi = self.FitnessValue[i]
+    #         t += 1
 
+    #generate
 def plot(X_origin, X):
     fig_origin = plt.figure(0)
     plt.xlabel('x')
@@ -119,6 +143,9 @@ def Fly_plot(X):    #萤火虫轨迹
     #
     # plt.pause(0.005)
     # plt.clf()
+
+
+
 
 
 
