@@ -3,9 +3,10 @@ import time
 
 import numpy as np
 import matplotlib.pyplot as plt
-from FA import FA
-import math
 
+import math
+list = [1,1,1,2,2]
+print(3 in list)
 
 
 

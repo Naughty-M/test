@@ -38,7 +38,7 @@ def set_Cent(dataSet,k,Fitness):
 
 
 # k均值聚类
-def KMeans(dataSet, k,Fitness):
+def KMeans(dataSet,k,Fitness):
     m = np.shape(dataSet)[0]  # 行的数目
 
     # 第一列存样本属于哪一簇
@@ -49,8 +49,9 @@ def KMeans(dataSet, k,Fitness):
     # 第1步 初始化centroids
     # centroids = randCent(dataSet, k)
 
-    centroids =set_Cent(dataSet,k,Fitness) #中心聚类
-    # print("da")
+    centroids =set_Cent(dataSet,k,Fitness) #中心聚类   centroids 为[质心的编号  质心的坐标  ]
+
+
     while clusterChange:
         clusterChange = False
 
@@ -64,6 +65,7 @@ def KMeans(dataSet, k,Fitness):
             for j in range(k):
                 # 计算该样本到质心的欧式距离
                 distance = distEclud(centroids[j, :], dataSet[i, :])
+
                 if distance < minDist:
                     minDist = distance
                     minIndex = j

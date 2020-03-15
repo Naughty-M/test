@@ -13,7 +13,7 @@ if __name__ == '__main__':
     for i in range(10):
         fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100],3)
         time_start = time.time()
-        fa.iterate()
+        fa.copy_iterate()
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()

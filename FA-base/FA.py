@@ -66,9 +66,7 @@ class FA:
         N = self.mean
         list = np.argsort(self.FitnessValue)
         list = list[:N]
-
         sum_distance = 0.
-
         for j in list:
             if(i!=j):
                 # print(self.DistanceBetweenIJ(i,j))
@@ -76,20 +74,15 @@ class FA:
         i_avg_distance = sum_distance/ N-1
         return  i_avg_distance
 
-    def neighbour(self,i): #返回邻居
+    def retrun_neighbour(self,i): #返回邻居
         list = np.argsort(self.FitnessValue)
         for j in list[:self.mean]:
-            if(self.DistanceBetweenIJ(i,j) <= self.I_average_Distance(i) and j!=i and j<self.mean):
-
-                # print("*************")
-                # print(self.FitnessValue[i])
-                # print(self.FitnessValue[j])
-                # print("***********")
+            if(self.DistanceBetweenIJ(i,j) <= self.I_average_Distance(i)*random.random() and j!=i):
                 return j
         return -1
 
-    def compare_ijFitness(self,i,j):    #比较 i和j 的适应度大小    i<j  retrue True
-            if(self.FitnessValue[i]<self.FitnessValue[j]):
+    def compare_ijFitness(self,i,j):    #比较 i和j 的适应度大小    i>j  retrue True
+            if(self.FitnessValue[i]>self.FitnessValue[j]):
                 return True
             else:
                 return False
@@ -99,17 +92,44 @@ class FA:
         :param i:
         :param j:
         """
-        j= self.neighbour(i)
+        j= self.retrun_neighbour(i)
         if(j!=-1):   #判断是否为i的邻居
             if(self.compare_ijFitness(i,j)):
                 self.X[i,:] = self.X[i, :] + \
                               self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                               np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
+                print("有比i强的邻居")
+
             else:
                 self.X[i,:] = self.bound[1]-self.bound[0]-self.X[i,:]
+                print("是邻居 但强度不够")
+                # self.X[i, :] = self.X[i, :] + Levy.levy(self.D)
         else:
-            self.X[i,:] = self.X[i,:]+Levy.levy(self.mean)
+            print("邻居都没有")
+            self.X[i,:] = self.X[i,:]+Levy.levy(self.D)\
+                          # *(self.bound[1]-self.bound[0])
 
+
+    def copy_iterate(self):
+        t = 0
+        while t < self.T:  # 迭代代数
+            for i in range(self.N):
+                sort_list = np.argsort(self.FitnessValue)
+                # print(self.X[list])
+                FFi = self.FitnessValue[i]
+                if i in sort_list[:self.mean]:
+                    self.update_neighboru(i)
+                else:
+                    for j in range(self.N):
+                        self.adjust_alphat(t, i, j)  # 自适应步长
+                        FFj = self.FitnessValue[j]
+                        if FFj < FFi:
+                            self.update(i, j)
+                            self.FitnessValue[i] = self.FitnessFunction(i)
+                            FFi = self.FitnessValue[i]
+            # self.K_mean_Plot()
+            # Fly_plot(self.X)
+            t += 1
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
@@ -178,6 +198,65 @@ class FA:
     #         t += 1
 
     #generate
+
+    def set_Cent(self):
+        sort_list = np.argsort(self.FitnessValue)
+        centroids =  np.zeros((self.mean, n))
+        for i in range(self.mean):
+            index = list[i]  #
+            centroids[i, :] = self.X[index, :]
+        return centroids
+
+        pass
+    def KMeans(self):
+        m = self.N  # 行的数目 种群大小
+
+        # 第一列存样本属于哪一簇
+        # 第二列存样本的到簇的中心点的误差
+        clusterAssment = np.mat(np.zeros((m, 2)))
+        clusterChange = True
+
+        # 第1步 初始化centroids
+        # centroids = randCent(dataSet, k)
+
+        centroids = set_Cent()  # 中心聚类   centroids 为[质心的编号  质心的坐标  ]
+
+        while clusterChange:
+            clusterChange = False
+
+            # 遍历所有的样本（行数）
+            for i in range(m):
+                minDist = 100000.0
+                minIndex = -1
+
+                # 遍历所有的质心
+                # 第2步 找出最近的质心
+                for j in range(k):
+                    # 计算该样本到质心的欧式距离
+                    distance = s
+
+                    if distance < minDist:
+                        minDist = distance
+                        minIndex = j
+                # 第 3 步：更新每一行样本所属的簇
+                if clusterAssment[i, 0] != minIndex:
+                    clusterChange = True
+                    clusterAssment[i, :] = minIndex, minDist ** 2
+
+            # 第 4 步：更新质心  我取消了
+            # for j in range(k):
+            #     pointsInCluster = dataSet[np.nonzero(clusterAssment[:, 0].A == j)[0]]  # 获取簇类所有的点
+            #     centroids[j, :] = np.mean(pointsInCluster, axis=0)  # 对矩阵的行求均值
+
+        # print("Congratulations,cluster complete!")
+        print(centroids)  # 质心集合
+
+        # print(clusterAssment)
+
+        print("************")
+        return centroids, clusterAssment
+
+
 def plot(X_origin, X):
     fig_origin = plt.figure(0)
     plt.xlabel('x')
