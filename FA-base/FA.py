@@ -4,13 +4,14 @@ import copy
 import time
 from functools import singledispatch   #重载函数
 import K_means as mean
+import random
 
 
 class FA:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound,mean):
         '''
 
-        :param D:群体大小
+        :param D:问题维度
         :param N:群体大小
         :param Beta0:最大吸引度
         :param gama:光吸收系数
@@ -55,12 +56,13 @@ class FA:
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
 
-    def I_average_Distance(self,N,i):         #计算精英萤火虫i的平均距离   list 为
+    def I_average_Distance(self,i):         #计算精英萤火虫i的平均距离   list 为
         """
         :param N:  邻居大小
         :param i: 传入的萤火虫
         :return: 平均距离
         """
+        N = self.mean
         list = np.argsort(self.FitnessValue)
         list = list[:N]
 
@@ -68,15 +70,52 @@ class FA:
 
         for j in list:
             if(i!=j):
-                print(self.DistanceBetweenIJ(i,j))
+                # print(self.DistanceBetweenIJ(i,j))
                 sum_distance+=self.DistanceBetweenIJ(i,j)
-        i_avg_distance = sum_distance/ len(list)-1
+        i_avg_distance = sum_distance/ N-1
         return  i_avg_distance
 
+    def neighbour(self,i): #返回邻居
+        list = np.argsort(self.FitnessValue)
+        for j in list[:self.mean]:
+            if(self.DistanceBetweenIJ(i,j) <= self.I_average_Distance(i) and j!=i and j<self.mean):
 
-    def update_neighboru(self,i,j):
+                # print("*************")
+                # print(self.FitnessValue[i])
+                # print(self.FitnessValue[j])
+                # print("***********")
+                return j
+        return -1
 
-       self.X[i, :] = self.X[i, :] + \
+    def compare_ijFitness(self,i,j):    #比较 i和j 的适应度大小    i<j  retrue True
+            if(self.FitnessValue[i]<self.FitnessValue[j]):
+                return True
+            else:
+                return False
+
+    def update_neighboru(self,i):
+        """
+
+        :param i:
+        :param j:
+        """
+        j= self.neighbour(i)
+        if(j!=-1):   #判断是否为i的邻居
+            if(self.compare_ijFitness(i,j)):
+                self.X[i,:] = self.X[i, :] + \
+                              self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
+                              np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
+            else:
+                self.X[i,:] = self.bound[1]-self.bound[0]-self.X[i,:]
+
+        else:
+
+            self.X[i,:] = self.X[i,:]+np.random.rand(self.D)
+
+
+
+
+        self.X[i, :] = self.X[i, :] + \
                       self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :])*np.random.rand(self.D) + \
                       self.alpha * (np.linalg.norm(self.X[i,:]-self.X[j,:])) / (self.bound[1]-self.bound[0])
 
@@ -104,6 +143,10 @@ class FA:
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             t += 1
+
+
+
+
 
 
     def find_min(self):
