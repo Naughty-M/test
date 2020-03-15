@@ -55,11 +55,31 @@ class FA:
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
 
+    def I_average_Distance(self,N,i):         #计算精英萤火虫i的平均距离   list 为
+        """
+        :param N:  邻居大小
+        :param i: 传入的萤火虫
+        :return: 平均距离
+        """
+        list = np.argsort(self.FitnessValue)
+        list = list[:N]
+
+        sum_distance = 0.
+
+        for j in list:
+            if(i!=j):
+                print(self.DistanceBetweenIJ(i,j))
+                sum_distance+=self.DistanceBetweenIJ(i,j)
+        i_avg_distance = sum_distance/ len(list)-1
+        return  i_avg_distance
+
 
     def update_neighboru(self,i,j):
+
        self.X[i, :] = self.X[i, :] + \
                       self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :])*np.random.rand(self.D) + \
                       self.alpha * (np.linalg.norm(self.X[i,:]-self.X[j,:])) / (self.bound[1]-self.bound[0])
+
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
