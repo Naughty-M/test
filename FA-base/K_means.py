@@ -24,13 +24,13 @@ def randCent(dataSet, k):
 
 def Return_List(dataSet,Fitness):  #返回序号
 
-    return np.argsort(-Fitness) ;
+    return np.argsort(Fitness) ;
 
 # 为给定数据集构建一个包含K个质心的集合
 def set_Cent(dataSet,k,Fitness):
     m, n = dataSet.shape
     centroids = np.zeros((k, n))
-    list = np.argsort(-Fitness)    #取前几的质心
+    list = np.argsort(Fitness)    #取前几的质心
     for i in range(k):
         index=list[i] #
         centroids[i, :] = dataSet[index, :]
