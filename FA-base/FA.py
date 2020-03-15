@@ -5,6 +5,7 @@ import time
 from functools import singledispatch   #重载函数
 import K_means as mean
 import random
+import Levy as Levy
 
 
 class FA:
@@ -95,7 +96,6 @@ class FA:
 
     def update_neighboru(self,i):
         """
-
         :param i:
         :param j:
         """
@@ -107,17 +107,8 @@ class FA:
                               np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
             else:
                 self.X[i,:] = self.bound[1]-self.bound[0]-self.X[i,:]
-
         else:
-
-            self.X[i,:] = self.X[i,:]+np.random.rand(self.D)
-
-
-
-
-        self.X[i, :] = self.X[i, :] + \
-                      self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :])*np.random.rand(self.D) + \
-                      self.alpha * (np.linalg.norm(self.X[i,:]-self.X[j,:])) / (self.bound[1]-self.bound[0])
+            self.X[i,:] = self.X[i,:]+Levy.levy(self.mean)
 
 
     def FitnessFunction(self, i):
@@ -126,7 +117,7 @@ class FA:
 
     def iterate(self):  #迭代     move
         t = 0
-        # list = np.argsort(-self.FitnessValue)
+        sort_list = np.argsort(self.FitnessValue)
         while t < self.T:     #迭代代数
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
@@ -139,7 +130,6 @@ class FA:
                         self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
-
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             t += 1

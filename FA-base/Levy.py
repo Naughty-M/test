@@ -10,10 +10,8 @@ def levy(n_dim):
     u = np.random.randn(n_dim) * sigma
     v = np.random.randn(n_dim)
     step = (u / np.power(np.abs(v), 1 / beta))*sign()
-
-
-    # coef: levy 飞行的更新系数
     return step
+
 def sign():
     if np.random.rand() < 1/2:
         return -1
