@@ -17,6 +17,7 @@ class FA:
         :param alpha: 步长因子
         :param T: best generation
         :param bound:  I think is the bound
+        :param mean :聚类长度
         '''
 
         self.D = D  # 问题维数
@@ -40,7 +41,7 @@ class FA:
 
     def adjust_alphat(self, t,i,j):
         if self.DistanceBetweenIJ(i,j)<self.alpha:
-            self.alpha = (1 - t / self.T) * self.alpha  # 自适应步长
+            self.alpha = 0.4/(1+np.math.exp(0.015*(t-self.T)/3)) # 自适应步长
 
     def DistanceBetweenIJ(self, i, j):
         return np.linalg.norm(self.X[i, :] - self.X[j, :])   #求范数    距离  OK
@@ -50,7 +51,6 @@ class FA:
                np.math.exp(-self.gama * (self.DistanceBetweenIJ(i, j) ** 2))    #吸引度
 
     def update(self, i, j):
-
         self.X[i, :] = self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
@@ -67,13 +67,11 @@ class FA:
 
     def iterate(self):  #迭代     move
         t = 0
-        list = np.argsort(-self.FitnessValue)
-
+        # list = np.argsort(-self.FitnessValue)
         while t < self.T:     #迭代代数
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
-                if(i in list):
-                    print("hahah")
+
                 for j in range(self.N):
                     self.adjust_alphat(t,i,j)  #自适应步长
                     FFj = self.FitnessValue[j]
@@ -83,7 +81,7 @@ class FA:
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
 
-            self.K_mean_Plot()
+            # self.K_mean_Plot()
             # Fly_plot(self.X)
             t += 1
 
@@ -107,7 +105,7 @@ class FA:
             print("****")
             i+=1
 
-    def K_mean_Plot(self):
+    def K_mean_Plot(self):  #我自都不知道是啥了   哦哦哦 画图
         centroids, clusterAssment = mean.KMeans(self.X, self.mean, self.FitnessValue)
         # mean.showCluster(self.X, self.mean, centroids, clusterAssment)
 
@@ -141,13 +139,8 @@ def Fly_plot(X):    #萤火虫轨迹
     plt.ylabel('y')
     plt.scatter(X[:, 0], X[:, 1], c='g')
     #
-    # plt.pause(0.005)
-    # plt.clf()
-
-
-
-
-
+    plt.pause(0.5)
+    plt.clf()
 
 
 
