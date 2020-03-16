@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import copy
 import time
 from functools import singledispatch   #重载函数
-import K_means as mean
 import random
 import Levy as Levy
 
@@ -46,6 +45,8 @@ class FA:
             self.alpha = 0.4/(1+np.math.exp(0.015*(t-self.T)/3)) # 自适应步长
 
     def DistanceBetweenIJ(self, i, j):
+        # if i==j:
+        #     return 0.
         return np.linalg.norm(self.X[i, :] - self.X[j, :])   #求范数    距离  OK
 
     def BetaIJ(self, i, j):  # AttractionBetweenIJ
@@ -87,7 +88,7 @@ class FA:
             else:
                 return False
 
-    def update_neighboru(self,i):
+    def update_neighboru(self,i,t):
         """
         :param i:
         :param j:
@@ -95,41 +96,50 @@ class FA:
         j= self.retrun_neighbour(i)
         if(j!=-1):   #判断是否为i的邻居
             if(self.compare_ijFitness(i,j)):
+                self.adjust_alphat(t,i,j)
                 self.X[i,:] = self.X[i, :] + \
                               self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                               np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
-                print("有比i强的邻居")
+                # print("有比i强的邻居")
 
             else:
                 self.X[i,:] = self.bound[1]-self.bound[0]-self.X[i,:]
-                print("是邻居 但强度不够")
+                # print("是邻居 但强度不够")
                 # self.X[i, :] = self.X[i, :] + Levy.levy(self.D)
         else:
-            print("邻居都没有")
+            # print("邻居都没有")
             self.X[i,:] = self.X[i,:]+Levy.levy(self.D)\
                           # *(self.bound[1]-self.bound[0])
-
 
     def copy_iterate(self):
         t = 0
         while t < self.T:  # 迭代代数
+            Kmeanslist = self.KMeans()
             for i in range(self.N):
                 sort_list = np.argsort(self.FitnessValue)
                 # print(self.X[list])
-                FFi = self.FitnessValue[i]
                 if i in sort_list[:self.mean]:
-                    self.update_neighboru(i)
+                    self.update_neighboru(i,t)
                 else:
-                    for j in range(self.N):
-                        self.adjust_alphat(t, i, j)  # 自适应步长
-                        FFj = self.FitnessValue[j]
-                        if FFj < FFi:
-                            self.update(i, j)
-                            self.FitnessValue[i] = self.FitnessFunction(i)
+
+                    for j in range(self.N) :
+                        if i == j:
+                            continue
+                          #kmeans 列表
+                        if(Kmeanslist[j]==Kmeanslist[i]):
+                            # print("Kmeanslist[j]==Kmeanslist[i]",i)
                             FFi = self.FitnessValue[i]
+                            FFj = self.FitnessValue[j]
+                            if FFj < FFi:
+                                self.adjust_alphat(t, i, j)  # 自适应步长
+                                self.update(i, j)
+                                self.FitnessValue[i] = self.FitnessFunction(i)
+                                # FFi = self.FitnessValue[i]
+
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             t += 1
+            print("tttttttttt",t)
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
@@ -155,10 +165,6 @@ class FA:
             t += 1
 
 
-
-
-
-
     def find_min(self):
         v = np.min(self.FitnessValue)
         n = np.argmin(self.FitnessValue)      #返回最小索引
@@ -179,83 +185,89 @@ class FA:
             i+=1
 
     def K_mean_Plot(self):  #我自都不知道是啥了   哦哦哦 画图
-        centroids, clusterAssment = mean.KMeans(self.X, self.mean, self.FitnessValue)
-        # mean.showCluster(self.X, self.mean, centroids, clusterAssment)
+        centroids, clusterAssment = self.KMeans(self.X, self.mean, self.FitnessValue)
+        self.showCluster(self.X, self.mean, centroids, clusterAssment)
 
-    # def Neighbour(self, X):
-    #     t = 0
-    #     list = np.argsort(-self.FitnessValue)
-    #     while t < self.T:  # 迭代代数
-    #         self.adjust_alphat(t)  # 自适应步长
-    #         for i in list:
-    #             FFi = self.FitnessValue[i]
-    #             for j in list:
-    #                 FFj = self.FitnessValue[j]
-    #                 if FFj < FFi:
-    #                     self.update_neighboru(i, j)
-    #                     self.FitnessValue[i] = self.FitnessFunction(i)
-    #                     FFi = self.FitnessValue[i]
-    #         t += 1
-
-    #generate
+    def showCluster(dataSet, k, centroids, clusterAssment):
+        m, n = dataSet.shape
+        if n != 2:
+            print("数据不是二维的")
+            return 1
+        mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
+        if k > len(mark):
+            print("k值太大了")
+            return 1
+        # 绘制所有的样本
+        for i in range(m):
+            markIndex = int(clusterAssment[i, 0])
+            plt.plot(dataSet[i, 0], dataSet[i, 1], mark[markIndex])
+        mark = ['Dr', 'Db', 'Dg', 'Dk', '^b', '+b', 'sb', 'db', '<b', 'pb']
+        # 绘制质心
+        for i in range(k):
+            plt.plot(centroids[i, 0], centroids[i, 1], mark[i])
+        # plt.pause(0.5)
+        # plt.clf()
 
     def set_Cent(self):
-        sort_list = np.argsort(self.FitnessValue)
-        centroids =  np.zeros((self.mean, n))
-        for i in range(self.mean):
-            index = list[i]  #
-            centroids[i, :] = self.X[index, :]
-        return centroids
 
-        pass
+        sort_list = np.argsort(self.FitnessValue)
+        centroids =  np.zeros((self.mean, self.D))
+
+        for i in range(self.mean):
+            index = sort_list[i]  #
+            centroids[i, :] = self.X[index, :]
+        return centroids  #    centroids 为[质心的编号  质心的坐标  ]
+
     def KMeans(self):
         m = self.N  # 行的数目 种群大小
-
         # 第一列存样本属于哪一簇
         # 第二列存样本的到簇的中心点的误差
-        clusterAssment = np.mat(np.zeros((m, 2)))
-        clusterChange = True
-
+        # clusterAssment = np.mat(np.zeros((m, 2)))
+        # clusterChange = True
+        sort_List_fitness = np.argsort(self.FitnessValue)    #适应度列表
+        k_Means_list = np.zeros(self.N)#聚类列表
         # 第1步 初始化centroids
         # centroids = randCent(dataSet, k)
-
-        centroids = set_Cent()  # 中心聚类   centroids 为[质心的编号  质心的坐标  ]
-
-        while clusterChange:
-            clusterChange = False
-
+        # centroids = self.set_Cent()  # 中心聚类   centroids 为[质心的编号  质心的坐标  ]
+        # while clusterChange:
+        #     clusterChange = False
             # 遍历所有的样本（行数）
-            for i in range(m):
-                minDist = 100000.0
-                minIndex = -1
-
-                # 遍历所有的质心
-                # 第2步 找出最近的质心
-                for j in range(k):
-                    # 计算该样本到质心的欧式距离
-                    distance = s
-
-                    if distance < minDist:
-                        minDist = distance
-                        minIndex = j
-                # 第 3 步：更新每一行样本所属的簇
-                if clusterAssment[i, 0] != minIndex:
-                    clusterChange = True
-                    clusterAssment[i, :] = minIndex, minDist ** 2
-
+        for i in range(m):
+            minDist = 100000.0
+            minIndex = -1
+            # 遍历所有的质心
+            # 第2步 找出最近的质心
+            for j in sort_List_fitness[:self.mean]:
+                # 计算该样本到质心的欧式距离
+                print(j,"K-mean")
+                distance = self.DistanceBetweenIJ(i,j)
+                if distance < minDist:
+                    minDist = distance
+                    minIndex = j
+            # 第 3 步：更新每一行样本所属的簇
+            # if clusterAssment[i, 0] != minIndex:
+                # clusterChange = True
+                # clusterAssment[i, :] = minIndex, minDist ** 2   # 第一列存样本属于哪一簇    # 第二列存样本的到簇的中心点的误差   暂时用不到
+            k_Means_list[i]=minIndex
+            # else:
+            #     k_Means_list[i] = sort_List_fitness[i]
             # 第 4 步：更新质心  我取消了
             # for j in range(k):
             #     pointsInCluster = dataSet[np.nonzero(clusterAssment[:, 0].A == j)[0]]  # 获取簇类所有的点
             #     centroids[j, :] = np.mean(pointsInCluster, axis=0)  # 对矩阵的行求均值
-
         # print("Congratulations,cluster complete!")
-        print(centroids)  # 质心集合
+        # print(centroids)  # 质心集合
 
         # print(clusterAssment)
 
-        print("************")
-        return centroids, clusterAssment
+        # print("************")
+        # return centroids, clusterAssment,k_Means_list
+        return k_Means_list
 
+    def K_means_list_I(self):  #返回I的簇内元素
+        list_keams_I =self.KMeans()
+        # print(list_keams_I)
+        return list_keams_I
 
 def plot(X_origin, X):
     fig_origin = plt.figure(0)
@@ -280,7 +292,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 20, 1, 0.000001, 0.97, 50, [-100, 100])
+        fa = FA(2, 20, 1, 0.000001, 0.97, 50, [-100, 100],3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)

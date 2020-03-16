@@ -14,6 +14,9 @@ if __name__ == '__main__':
         fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100],3)
         time_start = time.time()
         fa.copy_iterate()
+        # list,list2=fa.KMeans()
+        # print(list2,"************")
+        # print(fa.K_means_list_I())
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()

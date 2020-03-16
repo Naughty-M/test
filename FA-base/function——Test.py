@@ -1,12 +1,9 @@
-import numpy as np
-import time
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-import math
-list = [1,1,1,2,2]
-print(3 in list)
 
 
 
+
+
+for i in range(10):
+    if(i==5):
+        continue
+    print(i)

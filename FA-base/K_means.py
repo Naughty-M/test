@@ -93,22 +93,18 @@ def showCluster(dataSet, k, centroids, clusterAssment):
     if n != 2:
         print("数据不是二维的")
         return 1
-
     mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
     if k > len(mark):
         print("k值太大了")
         return 1
-
     # 绘制所有的样本
     for i in range(m):
         markIndex = int(clusterAssment[i, 0])
         plt.plot(dataSet[i, 0], dataSet[i, 1], mark[markIndex])
-
     mark = ['Dr', 'Db', 'Dg', 'Dk', '^b', '+b', 'sb', 'db', '<b', 'pb']
     # 绘制质心
     for i in range(k):
         plt.plot(centroids[i, 0], centroids[i, 1], mark[i])
-
     # plt.pause(0.5)
     # plt.clf()
 
