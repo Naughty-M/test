@@ -26,7 +26,6 @@ print("最差值：", np.max(value))
 print("平均时间：", np.average(t))
 
 
-
         #k-means
         # centroids, clusterAssment=mean.KMeans(fa.X,3,fa.FitnessValue)
         # # list =

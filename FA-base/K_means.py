@@ -38,6 +38,9 @@ def set_Cent(dataSet,k,Fitness):
 
 
 # k均值聚类
+
+
+
 def KMeans(dataSet,k,Fitness):
     m = np.shape(dataSet)[0]  # 行的数目
 
