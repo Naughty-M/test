@@ -41,8 +41,8 @@ class FA:
         self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个 浮点0【0.,0.,0.,0,.0,.0,.0,.0.】数组
         self.sortList = self.np_sort()
         for n in range(N):
-            # self.FitnessValue[n] = self.FitnessFunction(n)
-            self.FitnessValue[n] = self.Fuc2(n)
+            self.FitnessValue[n] = self.FitnessFunction(n)
+            # self.FitnessValue[n] = self.Fuc2(n)
 
     def adjust_alphat(self, t,i,j):
         if self.DistanceBetweenIJ(i,j)<self.alpha:
@@ -162,8 +162,8 @@ class FA:
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
                     self.update_neighboru(i)
-                    # self.FitnessValue[i] = self.FitnessFunction(i)
-                    self.FitnessValue[i] = self.Fuc2(i)
+                    self.FitnessValue[i] = self.FitnessFunction(i)
+                    # self.FitnessValue[i] = self.Fuc2(i)
                 else:
 
                     # print(Kmeanslist,"copy_")
@@ -179,7 +179,7 @@ class FA:
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
                                 self.update(i, j)
                                 self.FitnessValue[i] = self.FitnessFunction(i)
-                                self.FitnessValue[i] = self.Fuc2(i)
+                                # self.FitnessValue[i] = self.Fuc2(i)
 
                                 # FFi = self.FitnessValue[i]
 
