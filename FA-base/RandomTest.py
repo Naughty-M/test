@@ -11,7 +11,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)
     for i in range(10):
-        fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100],3)
+        fa = FA(10, 40, 1, 0.000001, 0.97, 500, [-100, 100],3)
         time_start = time.time()
         fa.copy_iterate()
         # list,list2=fa.KMeans()
@@ -20,6 +20,7 @@ if __name__ == '__main__':
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()
+        print(value[i])
 print("平均值：", np.average(value))
 print("最优值：", np.min(value))
 print("最差值：", np.max(value))

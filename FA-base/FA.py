@@ -51,8 +51,8 @@ class FA:
             self.alpha = 0.95
 
     def t_adjust_alphat(self,t):    #只有代数的步长策略
-        self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
-        # self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))  # 自适应步长
+        # self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
+        self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))  # 自适应步长
         # self.alpha = (1 - t / self.T) * self.alpha
 
     def DistanceBetweenIJ(self, i, j):
@@ -183,12 +183,13 @@ class FA:
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_) ** 2     #np.linalg.norm(求范数)   **乘方
+        return np.linalg.norm(x_)     #np.linalg.norm(求范数)   **乘方
 
     def iterate(self):  #迭代     move
         t = 0
         # sort_list = self.sortList
         while t < self.T:     #迭代代数
+            self.t_adjust_alphat(t)
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
                 for j in range(self.N):
@@ -374,7 +375,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 40, 1, 0.000001, 0.97, 50, [-100, 100],3)
+        fa = FA(30, 30, 1, 0.000001, 0.97, 500, [-100, 100],3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
