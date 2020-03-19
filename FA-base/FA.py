@@ -183,7 +183,7 @@ class FA:
 
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_)     #np.linalg.norm(求范数)   **乘方
+        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
 
     def iterate(self):  #迭代     move
         t = 0
