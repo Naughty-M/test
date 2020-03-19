@@ -41,8 +41,8 @@ class FA:
         self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个 浮点0【0.,0.,0.,0,.0,.0,.0,.0.】数组
         self.sortList = self.np_sort()
         for n in range(N):
-            self.FitnessValue[n] = self.FitnessFunction(n)
-
+            # self.FitnessValue[n] = self.FitnessFunction(n)
+            self.FitnessValue[n] = self.Fuc2(n)
 
     def adjust_alphat(self, t,i,j):
         if self.DistanceBetweenIJ(i,j)<self.alpha:
@@ -178,7 +178,7 @@ class FA:
                             if FFj < FFi:
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
                                 self.update(i, j)
-                                # self.FitnessValue[i] = self.FitnessFunction(i)
+                                self.FitnessValue[i] = self.FitnessFunction(i)
                                 self.FitnessValue[i] = self.Fuc2(i)
 
                                 # FFi = self.FitnessValue[i]
@@ -196,7 +196,7 @@ class FA:
 
     def Fuc2(self,i):
         x_=self.X[i, :]
-        return np.linalg.norm(x_,ord=1)+np.prod(x_)
+        return np.linalg.norm(x_,ord=1)+np.prod(list(map(abs,x_)))
     def fitnessFuction(self,x_):
         return np.linalg.norm(x_) ** 2
     def iterate(self):  #迭代     move
@@ -213,7 +213,7 @@ class FA:
                     if FFj < FFi:
                         # self.adjust_alphat(t,i,j)  #自适应步长
                         self.update(i, j)
-                        self.FitnessValue[i] = self.FitnessFunction(i)
+                        self.FitnessValue[i] = self.Fuc2(i)
                         FFi = self.FitnessValue[i]
             # Fly_plot(self.X)
             t += 1
@@ -390,7 +390,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(30, 30, 1.0, 1, 0.012, 500, [-100, 100],5)
+        fa = FA(30, 30, 1.0, 1, 0.012, 500, [-10, 10],5)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
