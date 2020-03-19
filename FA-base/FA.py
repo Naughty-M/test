@@ -114,7 +114,8 @@ class FA:
         k = 0
         # j= self.retrun_neighbour(i)
         if (i == self.sortList[0]):
-            self.X[i, :] = self.X[i, :] + Levy.levy(self.D)*self.alpha
+            self.X[i,:]= self.X[i, :] + Levy.levy(self.D)*self.alpha
+
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
 
         else:
@@ -161,7 +162,8 @@ class FA:
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
                     self.update_neighboru(i)
-                    self.FitnessValue[i] = self.FitnessFunction(i)
+                    # self.FitnessValue[i] = self.FitnessFunction(i)
+                    self.FitnessValue[i] = self.Fuc2(i)
                 else:
 
                     # print(Kmeanslist,"copy_")
@@ -176,7 +178,9 @@ class FA:
                             if FFj < FFi:
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
                                 self.update(i, j)
-                                self.FitnessValue[i] = self.FitnessFunction(i)
+                                # self.FitnessValue[i] = self.FitnessFunction(i)
+                                self.FitnessValue[i] = self.Fuc2(i)
+
                                 # FFi = self.FitnessValue[i]
 
             # self.K_mean_Plot()
@@ -189,6 +193,10 @@ class FA:
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
         return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+
+    def Fuc2(self,i):
+        x_=self.X[i, :]
+        return np.linalg.norm(x_,ord=1)+np.prod(x_)
     def fitnessFuction(self,x_):
         return np.linalg.norm(x_) ** 2
     def iterate(self):  #迭代     move
