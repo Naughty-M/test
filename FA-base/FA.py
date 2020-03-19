@@ -106,21 +106,28 @@ class FA:
             else:
                 return False
 
-    def update_neighboru(self,i,t):
+    def update_neighboru(self,i):
         """
         :param i:
         :param j:
         """
+        k = 0
         # j= self.retrun_neighbour(i)
         if (i == self.sortList[0]):
             self.X[i, :] = self.X[i, :] + Levy.levy(self.D)*self.alpha
+            # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
+
         else:
+
             for j in self.sortList[:self.mean]:
-                if(self.compare_ijFitness(i,j)):    #i>j  True
-                       # self.adjust_alphat(t,i,j)
+
+                if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
+
                        self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
+
+                       k+=1
                        # print("有比i强的邻居")
                 else:
                    #测试
@@ -151,17 +158,15 @@ class FA:
             for i in range(self.N):
                 sort_list = self.sortList
                 # print("for i in range(self.N)",i)
-
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
-                    self.update_neighboru(i,t)
+                    self.update_neighboru(i)
                     self.FitnessValue[i] = self.FitnessFunction(i)
                 else:
 
                     # print(Kmeanslist,"copy_")
                     for j in range(self.N) :
                           #kmeans 列表
-
                         if(clusterAssment[i,0]==clusterAssment[j,0]):
                         # for j in range(self.N):
                         #     print("Kmeanslist[j]==Kmeanslist[i]",i)
@@ -184,12 +189,14 @@ class FA:
     def FitnessFunction(self, i):
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
         return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
-
+    def fitnessFuction(self,x_):
+        return np.linalg.norm(x_) ** 2
     def iterate(self):  #迭代     move
         t = 0
         # sort_list = self.sortList
         while t < self.T:     #迭代代数
             self.t_adjust_alphat(t)
+            self.t_adjust_gama(t)
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
                 for j in range(self.N):
@@ -375,7 +382,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(30, 30, 1, 0.000001, 0.97, 500, [-100, 100],3)
+        fa = FA(30, 30, 1.0, 1, 0.012, 500, [-100, 100],5)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
@@ -384,6 +391,7 @@ if __name__ == '__main__':
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()
+        print(value[i])
         # plot(fa.X_origin, fa.X)
     print("平均值：", np.average(value))
     print("最优值：", np.min(value))
