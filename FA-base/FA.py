@@ -52,7 +52,7 @@ class FA:
 
     def t_adjust_alphat(self,t):    #只有代数的步长策略
         # self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
-        self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))  # 自适应步长
+        self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha # 自适应步长
         # self.alpha = (1 - t / self.T) * self.alpha
 
     def DistanceBetweenIJ(self, i, j):
@@ -73,6 +73,8 @@ class FA:
         self.X[i, :] = self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
+
+        #
 
     def I_average_Distance(self,i):         #计算精英萤火虫i的平均距离   list 为
         """
@@ -115,10 +117,11 @@ class FA:
         # j= self.retrun_neighbour(i)
 
         if (i == self.sortList[0]):
-            x_ = self.X[i, :] + (Levy.levy(self.D)-0.5) * self.alpha
-            if(self.fitnessFuction(x_)<self.FitnessValue[i]):
-                self.X[i,:] =x_
-
+            self.X[i, :]=self.alpha * (np.random.rand(self.D) - 0.5)
+            # x_ = self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) + (Levy.levy(self.D)-0.5) * self.alpha
+            # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+            # self.X[i,:] =x_
+            pass
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
 
         else:
@@ -127,10 +130,10 @@ class FA:
 
                 if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
 
-                       self.X[i,:] = self.X[i, :] + \
+                       self.X[i,:] = (2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)*self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
-
+                        #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)
                        k+=1
                        # print("有比i强的邻居")
                 else:
@@ -186,7 +189,7 @@ class FA:
                                 # self.FitnessValue[i] = self.Fuc2(i)
 
                                 # FFi = self.FitnessValue[i]
-            max = self.sortList[self.N-1]
+            max = self.sortList[self.N-1]  #简单自然选择
             min = self.sortList[0]
             self.X[max,:] = self.X[min,:]
             # self.K_mean_Plot()
@@ -402,7 +405,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 100, 1.0, 1.0, 0.95, 2000, [-100, 100], 2)
+        fa = FA(30, 30, 1.0, 1.0, 0.95, 500, [-10, 10],2)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
