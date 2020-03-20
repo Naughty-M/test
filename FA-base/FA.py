@@ -117,11 +117,13 @@ class FA:
         # j= self.retrun_neighbour(i)
 
         if (i == self.sortList[0]):
-            self.X[i, :]=self.alpha * (np.random.rand(self.D) - 0.5)
-            # x_ = self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) + (Levy.levy(self.D)-0.5) * self.alpha
-            # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
-            # self.X[i,:] =x_
-            pass
+
+            # self.X[i, :]+=self.alpha * (Levy.levy(self.D)-0.5)       #levy飞行
+
+            x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+            self.X[i,:] =x_
+            # self.X[i, :] = self.X[i, :] * (2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(
+            #     self.D)
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
 
         else:
@@ -130,7 +132,7 @@ class FA:
 
                 if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
 
-                       self.X[i,:] = (2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)*self.X[i, :] + \
+                       self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
                         #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)
@@ -204,8 +206,8 @@ class FA:
     def FitnessFunction(self, i):
 
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
-        return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
+        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
 
 
     def Fuc2(self,i):

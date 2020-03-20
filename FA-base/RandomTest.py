@@ -12,7 +12,7 @@ if __name__ == '__main__':
     t = np.zeros(T)
     value = np.zeros(T)
     for i in range(T):
-        fa = FA(30, 30, 1.0, 1.0, 0.95, 500, [-10, 10],2)
+        fa = FA(30, 30, 1.0, 1.0, 0.95, 500, [-100, 100],2)
         time_start = time.time()
         fa.copy_iterate()
         # list,list2=fa.KMeans()
