@@ -8,10 +8,11 @@ np.zeros(10)
 # print(np.zeros(10),)
 
 if __name__ == '__main__':
-    t = np.zeros(10)
-    value = np.zeros(10)
-    for i in range(10):
-        fa = FA(30, 30, 1.0, 1, 0.012, 500, [-10, 10],5)
+    T = 10
+    t = np.zeros(T)
+    value = np.zeros(T)
+    for i in range(T):
+        fa = FA(2, 30, 1.0, 1, 0.012, 500, [-100, 100],5)
         time_start = time.time()
         fa.copy_iterate()
         # list,list2=fa.KMeans()

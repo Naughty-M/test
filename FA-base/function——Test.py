@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import random as rd
 import matplotlib.pyplot as plt
@@ -110,8 +112,12 @@ class DE:
 
 
 def main():
-    for i in range(1):
-        de = DE(size=30, dim=30, maxgen=500, bound=[-10, 10], param=[0.8, 0.6])
+    T = 10
+    t = np.zeros(T)
+    value = np.zeros(T)
+    for i in range(10):
+        de = DE(size=30, dim=2, maxgen=500, bound=[-100, 100], param=[0.8, 0.6])
+        time_start = time.time()
         de.run()
 
         #
@@ -120,21 +126,31 @@ def main():
         print('=   x=', de.bp[0])
         print('=   y=', de.bp[1])
         print('= Function value:')
+        value[i] = de.fitness(de.bp)
         print('=   f(x,y)=', de.fitness(de.bp))
         # print(np.shape(de.bp))
 
+        # list,list2=fa.KMeans()
+        # print(list2,"************")
+        # print(fa.K_means_list_I())
+        time_end = time.time()
+        t[i] = time_end - time_start
         print('=' * 40)
         # print(de.flist)
         # print(de.bp)
 
         #
-        plt.plot(de.trace, 'r')
-        title = 'MIN: ' + str(de.fitness(de.bp))
-        plt.title(title)
-        plt.xlabel("Number of iterations")
-        plt.ylabel("Function values")
-        plt.show()
+        # plt.plot(de.trace, 'r')
+        # title = 'MIN: ' + str(de.fitness(de.bp))
+        # plt.title(title)
+        # plt.xlabel("Number of iterations")
+        # plt.ylabel("Function values")
+        # plt.show()
 
+    print("平均值：", np.average(value))
+    print("最优值：", np.min(value))
+    print("最差值：", np.max(value))
+    print("平均时间：", np.average(t))
 
 if __name__ == "__main__":
     main()
