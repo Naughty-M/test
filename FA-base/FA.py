@@ -42,7 +42,7 @@ class FA:
         self.sortList = self.np_sort()
         for n in range(N):
             self.FitnessValue[n] = self.FitnessFunction(n)
-            # self.FitnessValue[n] = self.Fuc2(n)
+
 
     def adjust_alphat(self, t,i,j):
         if self.DistanceBetweenIJ(i,j)<self.alpha:
@@ -113,8 +113,11 @@ class FA:
         """
         k = 0
         # j= self.retrun_neighbour(i)
+
         if (i == self.sortList[0]):
-            self.X[i,:]= self.X[i, :] + Levy.levy(self.D)*self.alpha
+            x_ = self.X[i, :] + (Levy.levy(self.D)-0.5) * self.alpha
+            if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+                self.X[i,:] =x_
 
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
 
@@ -151,6 +154,7 @@ class FA:
 
     def copy_iterate(self):
         t = 0
+
         while t < self.T:  # 迭代代数
             self.sortList = self.np_sort()
             self.t_adjust_alphat(t)
@@ -163,7 +167,7 @@ class FA:
                 if i in sort_list[:self.mean]:
                     self.update_neighboru(i)
                     self.FitnessValue[i] = self.FitnessFunction(i)
-                    # self.FitnessValue[i] = self.Fuc2(i)
+
                 else:
 
                     # print(Kmeanslist,"copy_")
@@ -182,17 +186,24 @@ class FA:
                                 # self.FitnessValue[i] = self.Fuc2(i)
 
                                 # FFi = self.FitnessValue[i]
-
+            max = self.sortList[self.N-1]
+            min = self.sortList[0]
+            self.X[max,:] = self.X[min,:]
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             # self.showCluster(centroids,clusterAssment)
             # print(t,"ttttttttttttttttttttttttttt")
             t += 1
+            print(t)
+            print(np.min(self.FitnessValue))
             # print("tttttttttt",t)
 
     def FitnessFunction(self, i):
+
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
+
 
     def Fuc2(self,i):
         x_=self.X[i, :]
@@ -208,7 +219,6 @@ class FA:
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
                 for j in range(self.N):
-
                     FFj = self.FitnessValue[j]
                     if FFj < FFi:
                         # self.adjust_alphat(t,i,j)  #自适应步长
@@ -217,6 +227,8 @@ class FA:
                         FFi = self.FitnessValue[i]
             # Fly_plot(self.X)
             t += 1
+            print(t)
+            print(np.min(self.FitnessValue))
 
     def find_min(self):
         v = np.min(self.FitnessValue)
@@ -390,7 +402,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(2, 30, 1.0, 1, 0.012, 500, [-100, 100],5)
+        fa = FA(2, 100, 1.0, 1.0, 0.95, 2000, [-100, 100], 2)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)

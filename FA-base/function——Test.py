@@ -30,16 +30,14 @@ class DE:
         # print(self.p)
         # print(self.f)
 
-    def fitness(self, x):
+    def fitness(self, x_):
         # 用的是病态函数
-        f = 0
-        for i in range(self.dim - 1):
-            f = f + x[i]**2
+
         # f=-(math.fabs(math.sin(x[0])*math.cos(x[1])*math.exp(math.fabs(1-math.sqrt(x[0]**2+x[1]**2)/math.pi))))
         # f=-(fabs(sin(x[0])*cos(x[1])*exp(fabs(1-sqrt(x[0]**2+x[1]**2)/pi))))
         # f=-0.0001*(fabs(sin(x[0])*sin(x[1])*exp(fabs(100-sqrt(x[0]**2+x[1]**2)/pi))+1))**0.1
-
-        return f
+        return np.linalg.norm(x_) ** 2
+        # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
 
     def bianyi(self, t):
         for i in range(t):
@@ -116,7 +114,7 @@ def main():
     t = np.zeros(T)
     value = np.zeros(T)
     for i in range(10):
-        de = DE(size=30, dim=2, maxgen=500, bound=[-100, 100], param=[0.8, 0.6])
+        de = DE(size=100, dim=30, maxgen=2000, bound=[-100, 100], param=[0.8, 0.6])
         time_start = time.time()
         de.run()
 
