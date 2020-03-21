@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import copy
 import time
-from functools import singledispatch   #重载函数
+from functools import singledispatch, reduce  # 重载函数
 import random
 import Levy as Levy
 
@@ -54,6 +54,7 @@ class FA:
         # self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
         self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha # 自适应步长
         # self.alpha = (1 - t / self.T) * self.alpha
+        #
 
     def DistanceBetweenIJ(self, i, j):
         # if i==j:
@@ -118,10 +119,10 @@ class FA:
 
         if (i == self.sortList[0]):
 
-            # self.X[i, :]+=self.alpha * (Levy.levy(self.D)-0.5)       #levy飞行
+            self.X[i, :]+=self.alpha * (Levy.levy(self.D)*np.random.rand(self.D))       #levy飞行
 
-            x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
-            self.X[i,:] =x_
+            # x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+            #
             # self.X[i, :] = self.X[i, :] * (2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(
             #     self.D)
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
@@ -206,8 +207,15 @@ class FA:
     def FitnessFunction(self, i):
 
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
+        # return np.linalg.norm(x_,ord=np.Inf)
+
+        """x_new = (-1)*x_ * np.sin(np.sqrt(abs(x_)))
+        return reduce(lambda x, y: x + y, x_new)"""
+        x_new = x_*np.sin(10*np.pi*x_)
+        return (-1)*reduce(lambda x, y: x + y, x_new)
+
 
 
     def Fuc2(self,i):
@@ -407,7 +415,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(30, 30, 1.0, 1.0, 0.95, 500, [-10, 10],2)
+        fa = FA(100, 30, 1.0, 1.0, 0.95, 500, [-1, 2],2)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
