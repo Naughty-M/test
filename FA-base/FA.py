@@ -119,9 +119,13 @@ class FA:
 
         if (i == self.sortList[0]):
 
-            self.X[i, :]+=self.alpha * (Levy.levy(self.D)*np.random.rand(self.D))       #levy飞行
+            self.X[i, :]+=self.alpha * (Levy.levy(self.D))       #levy飞行
 
-            # x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+            ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+            self.X[i,:] =x_'''    #改版
+
+
+
             #
             # self.X[i, :] = self.X[i, :] * (2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(
             #     self.D)
@@ -135,8 +139,9 @@ class FA:
 
                        self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
-                                     np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0])
-                        #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)
+                                     np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]) #精英令居
+                                     # self.alpha * (Levy.levy(self.D)*np.random.rand(self.D))    #levy  飞行
+                        #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)   多维度
                        k+=1
                        # print("有比i强的邻居")
                 else:
@@ -207,14 +212,15 @@ class FA:
     def FitnessFunction(self, i):
 
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
         # return np.linalg.norm(x_,ord=np.Inf)
 
         """x_new = (-1)*x_ * np.sin(np.sqrt(abs(x_)))
         return reduce(lambda x, y: x + y, x_new)"""
-        x_new = x_*np.sin(10*np.pi*x_)
-        return (-1)*reduce(lambda x, y: x + y, x_new)
+
+        '''x_new = x_*np.sin(10*np.pi*x_)
+        return (-1)*reduce(lambda x, y: x + y, x_new)'''
 
 
 
@@ -228,9 +234,10 @@ class FA:
         # sort_list = self.sortList
         while t < self.T:     #迭代代数
             self.t_adjust_alphat(t)
-            self.t_adjust_gama(t)
+            # self.t_adjust_gama(t)
             for i in range(self.N):
                 FFi = self.FitnessValue[i]
+
                 for j in range(self.N):
                     FFj = self.FitnessValue[j]
                     if FFj < FFi:
@@ -415,7 +422,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(100, 30, 1.0, 1.0, 0.95, 500, [-1, 2],2)
+        fa = FA(10, 100, 1.0, 1.0, 0.5, 1000, [-100, 100],3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
