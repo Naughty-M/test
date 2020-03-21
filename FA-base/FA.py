@@ -68,10 +68,14 @@ class FA:
     def BetaIJ(self, i, j):  # AttractionBetweenIJ
         return self.Beta0 * \
                np.math.exp(-self.gama * (self.DistanceBetweenIJ(i, j) ** 2))    #吸引度
+    def fan(self,t):   #振荡
+        T = self.T
+        resule = 1 / (1 + math.exp((math.log(3) + math.log(99)) * t / T - math.log(99)))
+        return resule
 
-    def update(self, i, j):
+    def update(self, i, j,t):
 
-        self.X[i, :] = self.X[i, :] + \
+        self.X[i, :] = (self.fan(t))*self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
 
@@ -172,7 +176,8 @@ class FA:
             self.t_adjust_gama(t)
             centroids, clusterAssment = self.Kmeans_Two_parament()
             for i in range(self.N):
-                sort_list = self.sortList
+                sort_list = self.sortList  #is ok
+
                 # print("for i in range(self.N)",i)
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
@@ -422,7 +427,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(10, 100, 1.0, 1.0, 0.5, 1000, [-100, 100],3)
+        fa = FA(10, 100, 1, 1.0, 0.5, 1000, [-100, 100],3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
