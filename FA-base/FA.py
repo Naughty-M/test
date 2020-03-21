@@ -123,7 +123,7 @@ class FA:
 
         if (i == self.sortList[0]):
             # self.X[i, :]*=self.fan(t) * ((2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(self.D))
-            self.X[i, :]+=self.alpha * (Levy.levy(self.D))       #levy飞行
+            self.X[i, :]+=self.alpha * (Levy.levy(self.D))    #levy飞行
 
             ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
             self.X[i,:] =x_'''    #改版
@@ -138,7 +138,7 @@ class FA:
         else:
             for j in self.sortList[:self.mean]:
                 if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
-                    self.X[i, :] += self.fan(t) * \
+                    self.X[i, :] = self.fan(t) * \
                                     (self.zhengfang(t)*self.X[i, :]+
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]))
@@ -179,7 +179,6 @@ class FA:
             centroids, clusterAssment = self.Kmeans_Two_parament()
             for i in range(self.N):
                 sort_list = self.sortList  #is ok
-
                 # print("for i in range(self.N)",i)
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
@@ -218,9 +217,10 @@ class FA:
     def FitnessFunction(self, i):
 
         x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
-        # return np.linalg.norm(x_,ord=np.Inf)
+        return np.linalg.norm(x_,ord=np.Inf)
+        # return (x_[1]-5.1/(4*(math.pi**2))*x_[0]**2+5/math.pi*x_[0]-6)**2+10*(1-1/(8*math.pi))*math.cos(x_[0])+10   #
 
         """x_new = (-1)*x_ * np.sin(np.sqrt(abs(x_)))
         return reduce(lambda x, y: x + y, x_new)"""
@@ -428,7 +428,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(10, 100, 1, 1.0, 0.5, 1000, [-100, 100],3)
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100], 2)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)
