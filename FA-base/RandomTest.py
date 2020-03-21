@@ -12,7 +12,7 @@ if __name__ == '__main__':
     t = np.zeros(T)
     value = np.zeros(T)
     for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
-        fa = FA(10, 100, 1, 1.0, 0.5, 1000, [-100, 100],3)
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100],4)
         time_start = time.time()
         fa.copy_iterate()
         # list,list2=fa.KMeans()

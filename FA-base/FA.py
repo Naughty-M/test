@@ -72,12 +72,12 @@ class FA:
         T = self.T
         resule = 1 / (1 + math.exp((math.log(3) + math.log(99)) * t / T - math.log(99)))
         return resule
-
-    def update(self, i, j,t):
-
-        self.X[i, :] = (self.fan(t))*self.X[i, :] + \
-                       self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
-                       self.alpha * (np.random.rand(self.D) - 0.5)   #np.random.rand(self.D)对应维度的数组
+    def zhengfang(self,t):
+        return (2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)
+    def update(self, i, j, t):
+        # self.fan(t) * ((2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)*\
+        self.X[i, :] =self.fan(t)*(self.zhengfang(t)*self.X[i,:]+self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
+                       self.alpha * (np.random.rand(self.D) - 0.5) )  #np.random.rand(self.D)对应维度的数组
 
         #
 
@@ -113,7 +113,7 @@ class FA:
             else:
                 return False
 
-    def update_neighboru(self,i):
+    def update_neighboru(self,i,t):
         """
         :param i:
         :param j:
@@ -122,7 +122,7 @@ class FA:
         # j= self.retrun_neighbour(i)
 
         if (i == self.sortList[0]):
-
+            # self.X[i, :]*=self.fan(t) * ((2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(self.D))
             self.X[i, :]+=self.alpha * (Levy.levy(self.D))       #levy飞行
 
             ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
@@ -136,17 +136,19 @@ class FA:
             # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
 
         else:
-
             for j in self.sortList[:self.mean]:
-
                 if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
-
-                       self.X[i,:] = self.X[i, :] + \
+                    self.X[i, :] += self.fan(t) * \
+                                    (self.zhengfang(t)*self.X[i, :]+
+                                     self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+
+                                     np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]))
+                    '''self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]) #精英令居
+                    '''
                                      # self.alpha * (Levy.levy(self.D)*np.random.rand(self.D))    #levy  飞行
                         #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)   多维度
-                       k+=1
+                    k+=1
                        # print("有比i强的邻居")
                 else:
                    #测试
@@ -181,11 +183,10 @@ class FA:
                 # print("for i in range(self.N)",i)
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
-                    self.update_neighboru(i)
+                    self.update_neighboru(i,t)
                     self.FitnessValue[i] = self.FitnessFunction(i)
 
                 else:
-
                     # print(Kmeanslist,"copy_")
                     for j in range(self.N) :
                           #kmeans 列表
@@ -197,7 +198,7 @@ class FA:
                             FFj = self.FitnessValue[j]
                             if FFj < FFi:
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
-                                self.update(i, j)
+                                self.update(i, j,t)
                                 self.FitnessValue[i] = self.FitnessFunction(i)
                                 # self.FitnessValue[i] = self.Fuc2(i)
 
@@ -247,7 +248,7 @@ class FA:
                     FFj = self.FitnessValue[j]
                     if FFj < FFi:
                         # self.adjust_alphat(t,i,j)  #自适应步长
-                        self.update(i, j)
+                        self.update(i, j,t)
                         self.FitnessValue[i] = self.FitnessFunction(i)
                         FFi = self.FitnessValue[i]
             # Fly_plot(self.X)
