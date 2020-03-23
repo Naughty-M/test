@@ -23,7 +23,7 @@ class AFSIndividual:
         rnd = np.random.random(size=len)
         self.chrom = np.zeros(len)
         self.velocity = np.random.random(size=len)
-        for i in xrange(0, len):
+        for i in range(0, len):
             self.chrom[i] = self.bound[0, i] + \
                 (self.bound[1, i] - self.bound[0, i]) * rnd[i]
         self.bestPosition = np.zeros(len)

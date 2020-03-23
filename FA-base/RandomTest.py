@@ -8,11 +8,11 @@ np.zeros(10)
 # print(np.zeros(10),)
 
 if __name__ == '__main__':
-    T = 10
+    T = 30
     t = np.zeros(T)
     value = np.zeros(T)
     for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
-        fa = FA(2, 30, 1, 1.0, 0.5, 5000, [-5, 5],2)
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100],3)
         time_start = time.time()
         fa.copy_iterate()
         # list,list2=fa.KMeans()

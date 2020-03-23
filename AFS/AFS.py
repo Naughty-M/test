@@ -189,6 +189,7 @@ class ArtificialFishSwarm:
         print("Optimal function value is: %f; " % self.trace[self.t, 0])
         print ("Optimal solution is:")
         print (self.best.chrom)
+        return self.trace[self.t, 0]
         self.printResult()
 
     def distance(self, x):
@@ -214,3 +215,4 @@ class ArtificialFishSwarm:
         plt.title("Artificial Fish Swarm algorithm for function optimization")
         plt.legend()
         plt.show()
+

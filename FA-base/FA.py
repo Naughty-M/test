@@ -32,17 +32,20 @@ class FA:
         self.mean = mean  #聚类长度
         self.bound  = bound
 
-        self.X = (bound[1] - bound[0]) * np.random.random([N, D]) + bound[0]    #我觉得是初始化
-        # self.X = (bound[1])*np.random.random([N, D])*Levy.sign()
+        self.X = self.initial()
         self.X_origin = copy.deepcopy(self.X)
         """
         copy function is used to  copy list   
         """
+
         self.FitnessValue = np.zeros(N)  # fitness value  返回的是一个个 浮点0【0.,0.,0.,0,.0,.0,.0,.0.】数组
         self.sortList = self.np_sort()
-        for n in range(N):
-            self.FitnessValue[n] = self.FitnessFunction(n)
 
+        for n in range(N):
+            self.FitnessValue[n] = self.FitnessFunction(self.X[n,:])
+
+    def initial(self):
+        return  (self.bound[1] - self.bound[0]) * np.random.random([self.N, self.D]) + self.bound[0]  # 我觉得是初始化
 
     def adjust_alphat(self, t,i,j):
         if self.DistanceBetweenIJ(i,j)<self.alpha:
@@ -71,12 +74,22 @@ class FA:
     def fan(self,t):   #振荡
         T = self.T
         resule = 1 / (1 + math.exp((math.log(3) + math.log(99)) * t / T - math.log(99)))
+        # print(resule,"resule")    趋向   0.5
         return resule
-    def zhengfang(self,t):
-        return (2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)
+    def zhengdang(self,t):
+        if (t <= self.T/2 ):
+            r = np.random.rand(self.D)
+            # print(r, "**************************************************************************")
+            # return (2*np.sqrt(np.random.rand(self.D)+0.00000000001)-1)*(np.random.rand(self.D)+0.00000000001+1)/(r+0.00000000001)
+            return (2 * np.sqrt(np.random.rand(self.D) + 0.00000000001) - 1) * (
+                        np.random.rand(self.D) + 0.00000000001) / (np.random.rand(self.D) + 0.00000000001)
+
+        else:
+            return (2*np.sqrt(np.random.rand(self.D)+0.00000000001)-1)*(np.random.rand(self.D)+0.00000000001)/(np.random.rand(self.D)+0.00000000001)
+
     def update(self, i, j, t):
         # self.fan(t) * ((2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)*\
-        self.X[i, :] =self.fan(t)*(self.zhengfang(t)*self.X[i,:]+self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
+        self.X[i, :] =self.fan(t)*(self.zhengdang(t)*self.X[i,:]+self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) +
                        self.alpha * (np.random.rand(self.D) - 0.5) )  #np.random.rand(self.D)对应维度的数组
 
         #
@@ -121,12 +134,28 @@ class FA:
         k = 0
         # j= self.retrun_neighbour(i)
 
-        if (i == self.sortList[0]):
-            # self.X[i, :]*=self.fan(t) * ((2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(self.D))
-            self.X[i, :]+=self.alpha * (Levy.levy(self.D))    #levy飞行
 
-            ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
-            self.X[i,:] =x_'''    #改版
+
+        if (i == self.sortList[0]):
+            x_ = self.X[i,:]
+            y_ = self.X[i,:]
+            # self.X[i, :]*=self.fan(t) * ((2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(self.D))
+            # self.X[i, :]+=self.alpha * (Levy.levy(self.D))    #levy飞行  原来
+            for n in range(self.D):
+                # print(self.X[i,n])
+                # print((self.X[i,n]+self.alpha * (Levy.levy(1)))*self.fan(t),"asfasf")
+                x_[n]= (self.X[i,n]+self.alpha * (Levy.levy(1)))
+
+                if(self.FitnessFunction(x_) < self.FitnessValue[i]):
+                    self.X[i, n] = x_[n]
+                    x_[n] = y_[n]
+                else:
+                    x_[n] = y_[n]
+
+                ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
+                self.X[i,:] =x_'''    #改版
+
+
 
 
 
@@ -137,11 +166,14 @@ class FA:
 
         else:
             for j in self.sortList[:self.mean]:
-                if(self.compare_ijFitness(i,j)  and k<2):    #i>j  True
+                if(self.compare_ijFitness(i,j)  and k<3):    #i>j  True
                     self.X[i, :] = self.fan(t) * \
-                                    (self.zhengfang(t)*self.X[i, :]+
+                                    (self.zhengdang(t)*self.X[i, :]+
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]))
+
+
+
                     '''self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]) #精英令居
@@ -183,44 +215,46 @@ class FA:
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
                     self.update_neighboru(i,t)
-                    self.FitnessValue[i] = self.FitnessFunction(i)
-
+                    self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
                 else:
-                    # print(Kmeanslist,"copy_")
                     for j in range(self.N) :
                           #kmeans 列表
                         if(clusterAssment[i,0]==clusterAssment[j,0]):
-                        # for j in range(self.N):
-                        #     print("Kmeanslist[j]==Kmeanslist[i]",i)
-
                             FFi = self.FitnessValue[i]
                             FFj = self.FitnessValue[j]
                             if FFj < FFi:
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
                                 self.update(i, j,t)
-                                self.FitnessValue[i] = self.FitnessFunction(i)
-                                # self.FitnessValue[i] = self.Fuc2(i)
+                                self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
 
-                                # FFi = self.FitnessValue[i]
-            max = self.sortList[self.N-1]  #简单自然选择
-            min = self.sortList[0]
-            self.X[max,:] = self.X[min,:]
+            #自然选择简单
+            '''select = 0
+            while select < 5:
+                self.X[self.sortList[self.N-1-select],:] = self.X[self.sortList[select],:]
+                self.FitnessValue[self.sortList[self.N-1-select]] = self.FitnessFunction(self.X[self.sortList[self.N-1-select], :])
+                select +=1'''
+
+
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             # self.showCluster(centroids,clusterAssment)
             # print(t,"ttttttttttttttttttttttttttt")
             t += 1
-            print(t)
-            print(np.min(self.FitnessValue))
+            print(t,"代数")
+            print(np.min(self.FitnessValue),"最优值")
+            print(self.X[self.sortList[0]])
             # print("tttttttttt",t)
 
-    def FitnessFunction(self, i):
-
-        x_ = self.X[i, :]            #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
+    def FitnessFunction(self, x_):
+        #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
         # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
-        # return np.linalg.norm(x_, ord=1) + np.prod(list(map(abs, x_)))
-        return np.linalg.norm(x_,ord=np.Inf)
+        # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
+        # return np.linalg.norm(x_,ord=np.Inf)
         # return (x_[1]-5.1/(4*(math.pi**2))*x_[0]**2+5/math.pi*x_[0]-6)**2+10*(1-1/(8*math.pi))*math.cos(x_[0])+10   #
+
+        x_new = (np.abs(x_ + 0.5)) ** 2
+
+        return reduce(lambda x, y: x + y, x_new)
 
         """x_new = (-1)*x_ * np.sin(np.sqrt(abs(x_)))
         return reduce(lambda x, y: x + y, x_new)"""
@@ -230,11 +264,6 @@ class FA:
 
 
 
-    def Fuc2(self,i):
-        x_=self.X[i, :]
-        return np.linalg.norm(x_,ord=1)+np.prod(list(map(abs,x_)))
-    def fitnessFuction(self,x_):
-        return np.linalg.norm(x_) ** 2
     def iterate(self):  #迭代     move
         t = 0
         # sort_list = self.sortList
@@ -249,7 +278,7 @@ class FA:
                     if FFj < FFi:
                         # self.adjust_alphat(t,i,j)  #自适应步长
                         self.update(i, j,t)
-                        self.FitnessValue[i] = self.FitnessFunction(i)
+                        self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
                         FFi = self.FitnessValue[i]
             # Fly_plot(self.X)
             t += 1
@@ -428,7 +457,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100], 2)
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100], 3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)

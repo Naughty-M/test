@@ -1,4 +1,4 @@
-import math
+from functools import reduce
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,18 +27,20 @@ class FA:
         return self.Beta0 * \
                np.math.exp(-self.gama * (self.DistanceBetweenIJ(i, j) ** 2))
 
-    def fan(self,t):
-        T = self.T
-        resule = 1 / (1 + math.exp((math.log(3) + math.log(99)) * t / T - math.log(99)))
-        return resule
-
-    def update(self, i, j,t):
-        self.X[i, :] = (self.fan(t))*(self.X[i, :] + \
+    def update(self, i, j):
+        self.X[i, :] = self.X[i, :] + \
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
-                       self.alpha * (np.random.rand(self.D) - 0.5))
+                       self.alpha * (np.random.rand(self.D) - 0.5)
 
-    def FitnessFunction(self, x_):
-        return np.linalg.norm(x_) ** 2
+    def FitnessFunction(self, x):
+
+        x_ = self.X[i, :]  # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
+        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
+        # return np.linalg.norm(x_,ord=np.Inf)
+        # return (x_[1]-5.1/(4*(math.pi**2))*x_[0]**2+5/math.pi*x_[0]-6)**2+10*(1-1/(8*math.pi))*math.cos(x_[0])+10   #
+        x_new = (np.abs(x_ + 0.5)) ** 2
+        return reduce(lambda x, y: x + y, x_new)
 
     def FindNewBest(self, i):
         FFi = self.FitnessFunction(self.X[i, :])
@@ -58,15 +60,12 @@ class FA:
                     FFj = self.FitnessValue[j]
                     if FFj < FFi:
                         tag = 1
-                        self.update(i, j,t)
+                        self.update(i, j)
                         self.FitnessValue[i] = self.FitnessFunction(self.X[i, :])
                         FFi = self.FitnessValue[i]
                 if tag == 0:
                     self.FindNewBest(i)
-                    pass
             t += 1
-            print(t)
-            print(np.min(self.FitnessValue))
 
     def find_min(self):
         v = np.min(self.FitnessValue)
@@ -78,13 +77,12 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)
     for i in range(10):
-        fa = FA(10, 100, 1, 1.0, 0.5, 1000, [-100, 100])
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100])
         time_start = time.time()
         fa.iterate()
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()
-        print(value[i])
     print("平均值：", np.average(value))
     print("最优值：", np.min(value))
     print("最差值：", np.max(value))

@@ -13,7 +13,11 @@ def qirta(D):
 
 if __name__ == '__main__':
     T = 10
-    print(1.2*math.exp(-600))
+    x_ = np.zeros(5)
+    x_ = x_+5
+    x_ = x_**2
+    print(x_)
+
     for t in range(T):
 
 
