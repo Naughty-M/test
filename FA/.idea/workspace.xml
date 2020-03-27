@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4be8fe51-093d-46bb-8f26-652dcae5167d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../AFS/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../FA-base/DE.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AFS/ObjFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AFS/ObjFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AFS/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AFS/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FA-base/FA.py" beforeDir="false" afterPath="$PROJECT_DIR$/../FA-base/FA.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FA-base/RandomTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/../FA-base/RandomTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FA-base/function——Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../FA-base/function——Test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FA.py" beforeDir="false" afterPath="$PROJECT_DIR$/FA.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FAIndividual.py" beforeDir="false" afterPath="$PROJECT_DIR$/FAIndividual.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObjFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/ObjFunction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,22 +158,22 @@
       <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="463" y="139" key="FileChooserDialogImpl/0.0.1366.768@0.0.1366.768" timestamp="1583595520600" />
-    <state width="1345" height="192" key="GridCell.Tab.0.bottom" timestamp="1583736306106">
+    <state width="1345" height="258" key="GridCell.Tab.0.bottom" timestamp="1585211694213">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1345" height="192" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1583736306106" />
-    <state width="1345" height="192" key="GridCell.Tab.0.center" timestamp="1583736306106">
+    <state width="1345" height="258" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1585211694213" />
+    <state width="1345" height="258" key="GridCell.Tab.0.center" timestamp="1585211694213">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1345" height="192" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1583736306106" />
-    <state width="1345" height="192" key="GridCell.Tab.0.left" timestamp="1583736306106">
+    <state width="1345" height="258" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1585211694213" />
+    <state width="1345" height="258" key="GridCell.Tab.0.left" timestamp="1585211694213">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1345" height="192" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1583736306106" />
-    <state width="1345" height="192" key="GridCell.Tab.0.right" timestamp="1583736306106">
+    <state width="1345" height="258" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1585211694213" />
+    <state width="1345" height="258" key="GridCell.Tab.0.right" timestamp="1585211694213">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1345" height="192" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1583736306106" />
+    <state width="1345" height="258" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1585211694213" />
     <state x="12" y="52" key="SettingsEditor" timestamp="1583595512354">
       <screen x="0" y="0" width="1366" height="768" />
     </state>

@@ -8,6 +8,7 @@ from functools import singledispatch, reduce  # 重载函数
 import random
 import Levy as Levy
 
+np.set_printoptions(suppress=True)
 
 class FA:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound,mean):
@@ -31,7 +32,7 @@ class FA:
         self.T = T
         self.mean = mean  #聚类长度
         self.bound  = bound
-
+        self.alpha2 = self.alpha    #tjjx
         self.X = self.initial()
         self.X_origin = copy.deepcopy(self.X)
         """
@@ -54,10 +55,14 @@ class FA:
             self.alpha = 0.95
 
     def t_adjust_alphat(self,t):    #只有代数的步长策略
-        # self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
-        self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha # 自适应步长
+        self.alpha = np.exp(-t / self.T) * self.alpha  # 自适应步长
+        # self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha # 自适应步长
+
         # self.alpha = (1 - t / self.T) * self.alpha
+        # self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha
         #
+
+
 
     def DistanceBetweenIJ(self, i, j):
         # if i==j:
@@ -89,8 +94,8 @@ class FA:
 
     def update(self, i, j, t):
         # self.fan(t) * ((2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)*\
-        self.X[i, :] =self.fan(t)*(self.zhengdang(t)*self.X[i,:]+self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) +
-                       self.alpha * (np.random.rand(self.D) - 0.5) )  #np.random.rand(self.D)对应维度的数组
+        self.X[i, :] = (self.zhengdang(t)*self.X[i,:]+self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) +
+                       self.alpha*(np.random.rand(self.D) - 0.5) )  #np.random.rand(self.D)对应维度的数组
 
         #
 
@@ -111,150 +116,171 @@ class FA:
         i_avg_distance = sum_distance/ N-1
         return  i_avg_distance
 
-    def retrun_neighbour(self,i): #返回邻居
-        # list = np.argsort(self.FitnessValue)
-        # neightborList =np.zeros(self.mean)
-        list = self.sortList
-        for j in list[:self.mean]:
-            if(self.DistanceBetweenIJ(i,j) <= self.I_average_Distance(i)*random.random() and j!=i):
-                return j
-        return -1
-
-    def compare_ijFitness(self,i,j):    #比较 i和j 的适应度大小    i>j  retrue True
-            if(self.FitnessValue[i]>self.FitnessValue[j]):
-                return True
-            else:
-                return False
 
     def update_neighboru(self,i,t):
         """
         :param i:
         :param j:
         """
-        k = 0
-        # j= self.retrun_neighbour(i)
-
-
-
+        x_ = self.X[i, :]
+        '''if (i == self.sortList[0]):
+            for  n in range(self.D ):
+                o = self.X[i, n] + (Levy.levy(1)) * self.alpha
+                if(o< self.bound[1]  and o>self.bound[0]):
+                    x_[n]=o
+            x_value= self.FitnessFunction(x_)
+            if x_value  <self.FitnessValue[i]:
+                self.X[i,:] = x_
+                self.FitnessValue[i] = x_value'''  #随机
         if (i == self.sortList[0]):
-            x_ = self.X[i,:]
-            y_ = self.X[i,:]
-            # self.X[i, :]*=self.fan(t) * ((2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(self.D))
-            # self.X[i, :]+=self.alpha * (Levy.levy(self.D))    #levy飞行  原来
-            for n in range(self.D):
-                # print(self.X[i,n])
-                # print((self.X[i,n]+self.alpha * (Levy.levy(1)))*self.fan(t),"asfasf")
-                x_[n]= (self.X[i,n]+self.alpha * (Levy.levy(1)))
-
-                if(self.FitnessFunction(x_) < self.FitnessValue[i]):
-                    self.X[i, n] = x_[n]
-                    x_[n] = y_[n]
-                else:
-                    x_[n] = y_[n]
-
-                ''' x_ =self.X[i, :]*(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)+self.alpha*Levy.levy(self.D) # if(self.fitnessFuction(x_)<self.FitnessValue[i]):
-                self.X[i,:] =x_'''    #改版
-
-
-
-
-
-            #
-            # self.X[i, :] = self.X[i, :] * (2 * np.sqrt(np.random.rand(self.D)) - 1) * np.random.rand(self.D) / np.random.rand(
-            #     self.D)
-            # self.X[i, :] = self.X[i, :] + np.random.rand(self.D) * self.alpha
+        #     for n in range(self.D):
+        #         o = self.X[i, n] + (Levy.levy(1)) * self.alpha
+        #         if (o < self.bound[1] and o > self.bound[0]):
+        #             x_[n] = o
+            x_ = self.X[i, :] + (Levy.levy(self.D)) * self.alpha
+            self.X[i,:] = x_
 
         else:
-            for j in self.sortList[:self.mean]:
-                if(self.compare_ijFitness(i,j)  and k<3):    #i>j  True
-                    self.X[i, :] = self.fan(t) * \
-                                    (self.zhengdang(t)*self.X[i, :]+
+            k = 0
+            for j in self.sortList[1:self.mean]:
+                if(self.FitnessValue[i]>self.FitnessValue[j]):    #i>j  True
+                    self.X[i, :] = (self.zhengdang(t)*self.X[i, :]+
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+
-                                     np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]))
-
-
+                                     np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha*(np.random.rand(self.D )-0.5)/(self.bound[1]-self.bound[0]))
 
                     '''self.X[i,:] = self.X[i, :] + \
                                      self.BetaIJ(i, j)*np.random.rand(self.D)*(self.X[j,:]-self.X[i,:])+ \
                                      np.linalg.norm(self.X[j,:]-self.X[i,:])*self.alpha/(self.bound[1]-self.bound[0]) #精英令居
                     '''
+
                                      # self.alpha * (Levy.levy(self.D)*np.random.rand(self.D))    #levy  飞行
                         #添加了(2*np.sqrt(np.random.rand(self.D))-1)*np.random.rand(self.D)/np.random.rand(self.D)   多维度
                     k+=1
                        # print("有比i强的邻居")
-                else:
-                   #测试
-                   # self.adjust_alphat(t, i, j)
-                   # self.X[i, :] = self.X[i, :] + \
-                   #                self.BetaIJ(i, j) * np.random.rand(self.D) * (self.X[j, :] - self.X[i, :]) + \
-                   #                np.linalg.norm(self.X[j, :] - self.X[i, :]) * self.alpha / (
-                   #                            self.bound[1] - self.bound[0])
-                   # self.X[i,:] = self.bound[1]+self.bound[0]-self.X[i,:]
-                   #  self.X[i, :] = self.X[i, :] + Levy.levy(self.D)*self.alpha
-                    continue
-                       # print("是邻居 但强度不够")
 
-                       # self.X[i, :] = self.X[i, :] + Levy.levy(self.D)
+                # else:
+                #
+                #     continue
 
-        # else:
-        #     # print("邻居都没有")
-        #     self.X[i,:] = self.X[i,:]+Levy.levy(self.D)\
-        #                   # *(self.bound[1]-self.bound[0])
+
 
     def copy_iterate(self):
         t = 0
-
+        plot_Fa = []
         while t < self.T:  # 迭代代数
-            self.sortList = self.np_sort()
+
             self.t_adjust_alphat(t)
             self.t_adjust_gama(t)
+            self.sortList = self.np_sort()
+            sort_list = self.sortList  # is ok
             centroids, clusterAssment = self.Kmeans_Two_parament()
             for i in range(self.N):
-                sort_list = self.sortList  #is ok
+
                 # print("for i in range(self.N)",i)
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
+
                     self.update_neighboru(i,t)
                     self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
+
+
                 else:
                     for j in range(self.N) :
                           #kmeans 列表
+                        # print(clusterAssment,"clusterAssment")
                         if(clusterAssment[i,0]==clusterAssment[j,0]):
                             FFi = self.FitnessValue[i]
                             FFj = self.FitnessValue[j]
-                            if FFj < FFi:
+                            if FFj < FFi :
                                 # self.adjust_alphat(t, i, j)  # 自适应步长
                                 self.update(i, j,t)
                                 self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
 
+            t += 1
             #自然选择简单
-            '''select = 0
-            while select < 5:
+            select = 0
+            while select < self.mean*(1-t/self.T):
                 self.X[self.sortList[self.N-1-select],:] = self.X[self.sortList[select],:]
                 self.FitnessValue[self.sortList[self.N-1-select]] = self.FitnessFunction(self.X[self.sortList[self.N-1-select], :])
-                select +=1'''
+                select +=1
 
 
             # self.K_mean_Plot()
             # Fly_plot(self.X)
             # self.showCluster(centroids,clusterAssment)
             # print(t,"ttttttttttttttttttttttttttt")
-            t += 1
+
             print(t,"代数")
+
             print(np.min(self.FitnessValue),"最优值")
+            # print(self.FitnessValue[self.sortList[0]],"self.FitnessValue[sort_list[0]]")
+            print(np.array(self.alpha),"步长")
             print(self.X[self.sortList[0]])
+            plot_Fa.append(self.FitnessValue.min())
             # print("tttttttttt",t)
+        return plot_Fa
 
     def FitnessFunction(self, x_):
         #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
+        # return np.linalg.norm(x_, ord=np.Inf)    #F4
+        '''result = 0.
+        for n in range(self.D-1):
+            result += 100*(x_[n+1]-x_[n]**2)**2+(x_[n]-1)**2
+        return result'''  #F5
+
+        '''result =0.
+        for n  in range(self.D):
+            result+= np.abs(x_[n]+0.5)**2
+
+        return result#F6'''   #F6
+        '''result = 0.
+        for n in range(self.D):
+            result += (n+1)*x_[n]**4
+
+        return  result+random.random()'''  #F7
+        '''sqrt_x = np.sqrt(np.abs(x_))
+        x_new = x_*np.sin(sqrt_x)
+        # print(sqrt_x,"x_new")
+        # print(418.9828*self.D)
+        print(reduce(lambda x, y: x + y, x_new),"reduce ")
+        return 418.9828*self.D - reduce(lambda x, y: x + y, x_new)# F8=cannot'''
+
+        '''result = 0.
+        for n in range(self.D):
+
+            result += x_[n]**2 - 10*np.cos(2*np.pi*x_[n])+10
+        return result'''   #F9
+
+        '''x_new1 = x_**2
+        return -20*np.exp(-0.2*np.sqrt((1/self.D)*reduce(lambda x, y: x + y,x_new1)))-\
+               np.exp((1/self.D)*reduce(lambda x, y: x + y,np.cos(2*np.pi*x_)))+20+np.e'''  #F10
+        '''x_new1 = x_ ** 2
+        result = 1
+        for n in range(self.D):
+             result*=np.cos(x_[n]/np.sqrt(n+1))
+
+        return 1/4000*reduce(lambda x, y: x + y,x_new1)-result+1'''
+
+        '''A = np.zeros((2, 25))
+        a = [-32, -16, 0, 16, 32]
+        A[0, :] = np.tile(a, (1, 5))
+        A[1, :] = np.repeat(a, 5)
+        result = 0.
+        for j in range(25):
+            zx1 = (x_[0]-A[0,j])**6+(x_[1]-A[1,j])**6+j+1
+            result+=1/zx1
+        return  (0.002+result)**(-1)'''    #F14
+
+
+
         # return np.linalg.norm(x_,ord=np.Inf)
         # return (x_[1]-5.1/(4*(math.pi**2))*x_[0]**2+5/math.pi*x_[0]-6)**2+10*(1-1/(8*math.pi))*math.cos(x_[0])+10   #
 
-        x_new = (np.abs(x_ + 0.5)) ** 2
-
-        return reduce(lambda x, y: x + y, x_new)
+        # x_new = (np.abs(x_ + 0.5)) ** 2
+        #
+        # return reduce(lambda x, y: x + y, x_new)+
 
         """x_new = (-1)*x_ * np.sin(np.sqrt(abs(x_)))
         return reduce(lambda x, y: x + y, x_new)"""
@@ -268,6 +294,7 @@ class FA:
         t = 0
         # sort_list = self.sortList
         while t < self.T:     #迭代代数
+            print(np.min(self.FitnessValue))
             self.t_adjust_alphat(t)
             # self.t_adjust_gama(t)
             for i in range(self.N):
@@ -283,7 +310,7 @@ class FA:
             # Fly_plot(self.X)
             t += 1
             print(t)
-            print(np.min(self.FitnessValue))
+            # print(np.min(self.FitnessValue))
 
     def find_min(self):
         v = np.min(self.FitnessValue)
@@ -361,8 +388,8 @@ class FA:
             clusterChange = False
             # 遍历所有的样本（行数）
             for i in range(m):
-                minDist = 100000.0
-                minIndex = -1
+                minDist = 100000000000.0
+                minIndex = 0
 
                 # 遍历所有的质心
                 # 第2步 找出最近的质心
@@ -370,14 +397,17 @@ class FA:
                     # 计算该样本到质心的欧式距离
                     # print(centroids[j, :],"centroids[j, :]")
                     distance = self.distEclud(centroids[j, :], self.X[i, :])
-                    if distance < minDist:
+                    if distance <= minDist:
                         minDist = distance
                         minIndex = j
                 # 第 3 步：更新每一行样本所属的簇
                 if clusterAssment[i, 0] != minIndex:
                     clusterChange = True
+                    # print(minIndex,"minIndex")
                     clusterAssment[i, :] = minIndex, minDist ** 2
-
+                if(minIndex==-1):
+                    pass
+                    # print(distance,"distance")
         return  centroids,clusterAssment
 
 
@@ -466,7 +496,8 @@ if __name__ == '__main__':
         time_end = time.time()
         t[i] = time_end - time_start
         value[i], n = fa.find_min()
-        print(value[i])
+        print(value[i],"最优值")
+        print(t,"迭代次数")
         # plot(fa.X_origin, fa.X)
     print("平均值：", np.average(value))
     print("最优值：", np.min(value))

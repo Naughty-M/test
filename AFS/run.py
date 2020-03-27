@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
         bound = np.tile([[-100], [100]], 30)
         # (self, sizepop, vardim, bound, MAXGEN, params):
-        afs = ArtificialFishSwarm(30, 30, bound, 500, [0.001, 0.0001, 0.618, 40])
+        afs = ArtificialFishSwarm(30, 30, bound, 200, [0.001, 0.0001, 0.618, 40])
         value[i] = afs.solve()
 
     print("平均值：", np.average(value))

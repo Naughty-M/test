@@ -12,7 +12,7 @@ def GrieFunc(vardim, x, bound):
         s2 = s2 * math.cos(x[i - 1] / math.sqrt(i))
     y = (1. / 4000.) * s1 - s2 + 1
     y = 1. / (1. + y)
-    return y
+    return abs(y)+100
 
 
 def RastFunc(vardim, x, bound):
