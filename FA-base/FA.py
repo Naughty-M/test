@@ -174,16 +174,14 @@ class FA:
             self.sortList = self.np_sort()
             sort_list = self.sortList  # is ok
             centroids, clusterAssment = self.Kmeans_Two_parament()
+            self.showCluster(centroids, clusterAssment)
             for i in range(self.N):
 
                 # print("for i in range(self.N)",i)
                 # print(self.X[list])
                 if i in sort_list[:self.mean]:
-
                     self.update_neighboru(i,t)
                     self.FitnessValue[i] = self.FitnessFunction(self.X[i,:])
-
-
                 else:
                     for j in range(self.N) :
                           #kmeans 列表
@@ -207,7 +205,7 @@ class FA:
 
             # self.K_mean_Plot()
             # Fly_plot(self.X)
-            # self.showCluster(centroids,clusterAssment)
+            self.showCluster(centroids,clusterAssment)
             # print(t,"ttttttttttttttttttttttttttt")
 
             print(t,"代数")
@@ -222,24 +220,24 @@ class FA:
 
     def FitnessFunction(self, x_):
         #X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
-        # return np.linalg.norm(x_, ord=np.Inf)    #F4
+        return np.linalg.norm(x_, ord=np.Inf)    #F4
         '''result = 0.
         for n in range(self.D-1):
             result += 100*(x_[n+1]-x_[n]**2)**2+(x_[n]-1)**2
-        return result'''  #F5
+        return result  #F5'''
 
         '''result =0.
         for n  in range(self.D):
             result+= np.abs(x_[n]+0.5)**2
 
-        return result#F6'''   #F6
+        return result#F6  #F6'''
         '''result = 0.
         for n in range(self.D):
             result += (n+1)*x_[n]**4
 
-        return  result+random.random()'''  #F7
+        return  result+random.random()  #F7'''
         '''sqrt_x = np.sqrt(np.abs(x_))
         x_new = x_*np.sin(sqrt_x)
         # print(sqrt_x,"x_new")
@@ -251,12 +249,12 @@ class FA:
         for n in range(self.D):
 
             result += x_[n]**2 - 10*np.cos(2*np.pi*x_[n])+10
-        return result'''   #F9
+        return result  #F9'''
 
         '''x_new1 = x_**2
         return -20*np.exp(-0.2*np.sqrt((1/self.D)*reduce(lambda x, y: x + y,x_new1)))-\
-               np.exp((1/self.D)*reduce(lambda x, y: x + y,np.cos(2*np.pi*x_)))+20+np.e'''  #F10
-        '''x_new1 = x_ ** 2
+               np.exp((1/self.D)*reduce(lambda x, y: x + y,np.cos(2*np.pi*x_)))+20+np.e #F10'''
+        ''' x_new1 = x_ ** 2
         result = 1
         for n in range(self.D):
              result*=np.cos(x_[n]/np.sqrt(n+1))
@@ -271,7 +269,7 @@ class FA:
         for j in range(25):
             zx1 = (x_[0]-A[0,j])**6+(x_[1]-A[1,j])**6+j+1
             result+=1/zx1
-        return  (0.002+result)**(-1)'''    #F14
+        return  (0.002+result)**(-1)    '''#F14
 
 
 
@@ -287,9 +285,6 @@ class FA:
 
         '''x_new = x_*np.sin(10*np.pi*x_)
         return (-1)*reduce(lambda x, y: x + y, x_new)'''
-
-
-
     def iterate(self):  #迭代     move
         t = 0
         # sort_list = self.sortList
@@ -361,8 +356,10 @@ class FA:
         # 绘制质心
         for i in range(k):
             plt.plot(centroids[i, 0], centroids[i, 1], mark[i])
-        plt.pause(0.5)
-        plt.clf()
+
+        plt.show()
+        # plt.pause(0.5)
+        # plt.clf()
 
     def set_Cent(self):
         sort_list = self.sortList
@@ -487,7 +484,7 @@ if __name__ == '__main__':
     t = np.zeros(10)
     value = np.zeros(10)        ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
     for i in range(10):
-        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-100, 100], 3)
+        fa = FA(30, 30, 1, 1.0, 0.5, 500, [-10, 10], 3)
         # print(fa.FitnessValue)
         # fa.np_sort()
         # print(fa.FitnessValue)

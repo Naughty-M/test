@@ -21,7 +21,7 @@ def func(x_):
     for n in range(D):
         result += (n + 1) * x_[n] ** 4
 
-    return result + random.random()
+    return 100000 + random.random()
     '''result =0.
     for n in range(D):
         result += np.abs(x_[n] + 0.5) ** 2
@@ -33,28 +33,29 @@ from sko.AFSA import AFSA
 if __name__=="__main__":
 
 
-    afsa = AFSA(func, n_dim=30, size_pop=30, max_iter=500,
+    afsa = AFSA(func, n_dim=30, size_pop=30, max_iter=50,
                 max_try_num=100, step=0.5, visual=0.3,
                 q=0.98, delta=0.5)
     best_x, best_y = afsa.run()
     # print("Xasxasddasd")
     print(best_x, best_y,"dadas da ad adasd asd a")
-    T = 10
-    t = np.zeros(T)
-    value = np.zeros(T)
-    for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
-        afsa = AFSA(func, n_dim=30, size_pop=30, max_iter=100,
-                    max_try_num=100, step=0.5, visual=0.3,
-                    q=0.98, delta=0.5)
-        time_start = time.time()
-        best_x, best_y = afsa.run()
 
-        time_end = time.time()
-        t[i] = time_end - time_start
-        value[i]= best_y
-        print(value[i])
-    print("平均值：", np.average(value))
-    print("最优值：", np.min(value))
-    print("最差值：", np.max(value))
-    print("平均时间：", np.average(t))
+    # T = 10
+    # t = np.zeros(T)
+    # value = np.zeros(T)
+    # for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
+    #     afsa = AFSA(func, n_dim=30, size_pop=30, max_iter=100,
+    #                 max_try_num=100, step=0.5, visual=0.3,
+    #                 q=0.98, delta=0.5)
+    #     time_start = time.time()
+    #     best_x, best_y = afsa.run()
+    #
+    #     time_end = time.time()
+    #     t[i] = time_end - time_start
+    #     value[i]= best_y
+    #     print(value[i])
+    # print("平均值：", np.average(value))
+    # print("最优值：", np.min(value))
+    # print("最差值：", np.max(value))
+    # print("平均时间：", np.average(t))
 

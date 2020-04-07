@@ -156,12 +156,16 @@ class ArtificialFishSwarm:
         for i in range(0, self.sizepop):
             self.evaluation(self.population[i])
             self.fitness[i] = self.population[i].fitness
+            # print(self.fitness[i])
         best = np.max(self.fitness)
         bestIndex = np.argmax(self.fitness)
         self.best = copy.deepcopy(self.population[bestIndex])
         self.avefitness = np.mean(self.fitness)
-        self.trace[self.t, 0] = (1 - self.best.fitness) / self.best.fitness
-        self.trace[self.t, 1] = (1 - self.avefitness) / self.avefitness
+        # print(self.best.fitness,"self.best.fitness")
+        self.trace[self.t, 0] = self.best.fitness
+        self.trace[self.t, 1] = self.avefitness
+
+        #yici
         print("Generation %d: optimal function value is: %f; average function value is %f" % (
             self.t, self.trace[self.t, 0], self.trace[self.t, 1]))
         while self.t < self.MAXGEN - 1:
@@ -170,26 +174,22 @@ class ArtificialFishSwarm:
             for i in range(0, self.sizepop):
                 xi1 = self.huddle(self.population[i])
                 xi2 = self.follow(self.population[i])
-                if xi1.fitness > xi2.fitness:
+                if xi1.fitness < xi2.fitness:
                     self.population[i] = xi1
                     self.fitness[i] = xi1.fitness
                 else:
                     self.population[i] = xi2
                     self.fitness[i] = xi2.fitness
-            best = np.max(self.fitness)
-            bestIndex = np.argmax(self.fitness)
-            if best > self.best.fitness:
+
+            best = np.min(self.fitness)
+            bestIndex = np.argmin(self.fitness)
+            if best < self.best.fitness:
                 self.best = copy.deepcopy(self.population[bestIndex])
             self.avefitness = np.mean(self.fitness)
-            self.trace[self.t, 0] = (1 - self.best.fitness) / self.best.fitness
-            self.trace[self.t, 1] = (1 - self.avefitness) / self.avefitness
+            self.trace[self.t, 0] = self.best.fitness
+            self.trace[self.t, 1] =self.avefitness
             print("Generation %d: optimal function value is: %f; average function value is %f" % (
                 self.t, self.trace[self.t, 0], self.trace[self.t, 1]))
-
-        print("Optimal function value is: %f; " % self.trace[self.t, 0])
-        print ("Optimal solution is:")
-        print (self.best.chrom)
-        return self.trace[self.t, 0]
         self.printResult()
 
     def distance(self, x):
@@ -215,4 +215,11 @@ class ArtificialFishSwarm:
         plt.title("Artificial Fish Swarm algorithm for function optimization")
         plt.legend()
         plt.show()
+        
 
+if __name__ == "__main__":
+
+    vid = 30
+    bound = np.tile([[-10], [10]], vid)
+    afs = ArtificialFishSwarm(30, vid, bound, 500, [0.001, 0.0001, 0.618, 40])
+    afs.solve()

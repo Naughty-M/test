@@ -6,7 +6,7 @@ import copy
 import time
 
 
-class FA:
+class FA_orgain:
     def __init__(self, D, N, Beta0, gama, alpha, T, bound):
         self.D = D  # 问题维数
         self.N = N  # 群体大小
@@ -32,15 +32,15 @@ class FA:
                        self.BetaIJ(i, j) * (self.X[j, :] - self.X[i, :]) + \
                        self.alpha * (np.random.rand(self.D) - 0.5)
 
-    def FitnessFunction(self, x):
+    def FitnessFunction(self, x_):
 
-        x_ = self.X[i, :]  # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
-        # return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
+        # x_ = self.X[i, :]  # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
+        return np.linalg.norm(x_)**2     #np.linalg.norm(求范数)   **乘方
         # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
         # return np.linalg.norm(x_,ord=np.Inf)
         # return (x_[1]-5.1/(4*(math.pi**2))*x_[0]**2+5/math.pi*x_[0]-6)**2+10*(1-1/(8*math.pi))*math.cos(x_[0])+10   #
-        x_new = (np.abs(x_ + 0.5)) ** 2
-        return reduce(lambda x, y: x + y, x_new)
+        # x_new = (np.abs(x_ + 0.5)) ** 2
+        # return reduce(lambda x, y: x + y, x_new)
 
     def FindNewBest(self, i):
         FFi = self.FitnessFunction(self.X[i, :])
@@ -52,6 +52,7 @@ class FA:
 
     def iterate(self):
         t = 0
+        plot_Fa = []
         while t < self.T:
             for i in range(self.N):
                 tag = 0
@@ -65,7 +66,10 @@ class FA:
                         FFi = self.FitnessValue[i]
                 if tag == 0:
                     self.FindNewBest(i)
+            plot_Fa.append(np.min(self.FitnessValue))
+
             t += 1
+        return  plot_Fa
 
     def find_min(self):
         v = np.min(self.FitnessValue)
