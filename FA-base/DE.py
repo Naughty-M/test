@@ -1,4 +1,6 @@
 # -*- coding: cp936 -*-
+import copy
+import time
 from functools import reduce
 
 import numpy as np
@@ -8,8 +10,59 @@ import random
 
 
 # Rastrigr 函数
+from Petri_test import sigmoid, Funvtion
+
+
 def object_function(x_):
-    D = 30
+
+
+    return Funvtion(x_)
+    '''
+    
+    :param x_: 
+    :return: 
+    '''
+    """
+    result = 0.
+    D= 5
+
+    for i in range(D):
+        w = [0., 0.2, 0.5, 0.3, 0.4, 0.6]
+        u = [0., 0.7, 0.9, 0.6, 0.8, 0.7]
+        t = [0., 0.3, 0.4, 0.2, 0.5, 0.4]
+        w[i + 1] = x_[i]
+        # t[4] = x_[0]
+        ww = copy.deepcopy(w)
+        uu = copy.deepcopy(u)
+        tt = copy.deepcopy(t)
+        p1 = 0.9
+        p4 = 0.9
+        p5 = 0.9
+        p7 = 0.9
+        b = 10
+        p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+        p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+        x1 = p9
+        x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+        # p3 = max(x1, x2)
+        p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+        x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+        p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+        x4 = p6 * w[4] + p7 * w[5]
+        p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+        result += (p8 - 0.568015203115994) ** 2
+        # print("result",result)
+        # print(i,"i")
+        # print("x",x_)
+        # print(x_)
+
+    return result
+    """
+
+
+
+
+    # D = 30
     # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
     # return np.linalg.norm(x_) ** 2  # np.linalg.norm(求范数)   **乘方
     # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
@@ -46,13 +99,13 @@ def object_function(x_):
     x_new1 = x_**2
     return -20*np.exp(-0.2*np.sqrt((1/D)*reduce(lambda x, y: x + y,x_new1)))-\
            np.exp((1/D)*reduce(lambda x, y: x + y,np.cos(2*np.pi*x_)))+20+np.e # F10"""
-    x_  = np.array(x_)
-    x_new1 = x_ ** 2
-    result = 1
-    for n in range(D ):
-         result*=np.cos(x_[n]/np.sqrt(n+1))
-
-    return 1/4000*reduce(lambda x, y: x + y,x_new1)-result+1
+    # x_  = np.array(x_)
+    # x_new1 = x_ ** 2
+    # result = 1
+    # for n in range(D ):
+    #      result*=np.cos(x_[n]/np.sqrt(n+1))
+    #
+    # return 1/4000*reduce(lambda x, y: x + y,x_new1)-result+1
 
     ''' A = np.zeros((2, 25))
     a = [-32, -16, 0, 16, 32]
@@ -80,12 +133,12 @@ def object_function(x_):
 
 # 参数
 def initpara():
-    NP = 30  # 种群数量
+    NP = 50  # 种群数量
     F = 0.6  # 缩放因子
     CR = 0.7  # 交叉概率
-    generation = 500  # 遗传代数
-    len_x = 30     #维度
-    value_up_range = 600
+    generation = 200  # 遗传代数
+    len_x = 5    #维度
+    value_up_range = 1
     value_down_range = -value_up_range
     return NP, F, CR, generation, len_x, value_up_range, value_down_range
 
@@ -170,12 +223,14 @@ def selection(u_list, np_list,NP):
     return np_list
 
 
-def DE():
+def DE(NP, F, CR, generation, len_x, value_up_range, value_down_range):
     # 主函数
-    NP, F, CR, generation, len_x, value_up_range, value_down_range = initpara()
+    # NP, F, CR, generation, len_x, value_up_range, value_down_range = initpara()
     np_list = initialtion(NP,len_x,value_down_range,value_up_range)
     min_x = []
     min_f = []
+
+    # np_list = []  # 种群，染色体
     for i in range(0, NP):
         xx = []
         xx.append(object_function(np_list[i]))
@@ -191,13 +246,18 @@ def DE():
         min_f.append(min(xx))
         min_x.append(np_list[xx.index(min(xx))])
     # 输出
-    min_ff = min(min_f)
+
+    min_ff = min(min_f)  #最小适应度值
     min_xx = min_x[min_f.index(min_ff)]
     print('the minimum point is x ')
     print(min_xx)
     print('the minimum value is y ')
     print(min_ff)
-    return min_f
+
+    # min_f 最小适应度
+    # min_x 最小值
+    # print(min_x)
+    return min_f,min_x
 
     # 画图
     '''x_label = np.arange(0, generation + 1, 1)
@@ -208,12 +268,27 @@ def DE():
     plt.show()'''
 
 if __name__=="__main__":
-    T = 10
+    T = 1
     t = np.zeros(T)
     value = np.zeros(T)
     for i in range(T):
-        value[i] = DE()[-1]
-        print(i,"i","  ",value[i],)
+        timestart = time.time()
+
+
+        NP = 50  # 种群数量
+        F = 0.6  # 缩放因子
+        CR = 0.7  # 交叉概率
+        generation = 200  # 遗传代数
+        len_x = 5  # 维度
+        value_up_range = 1
+        value_down_range = 0
+
+        value[i] ,position= DE(NP, F, CR, generation, len_x, value_up_range, value_down_range)
+        print(i, "i", "  ", value[i], )
+        timeend = time.time()
+        print(timeend-timestart,"时间")
+
+
 
     print("平均值：", np.average(value))
     print("最优值：", np.min(value))

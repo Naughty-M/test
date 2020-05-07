@@ -1,22 +1,96 @@
+import copy
 from functools import reduce
 
 import numpy as np
 import random
 
 import matplotlib.pyplot as plt
-def fit_fun(x_):  # 适应函数
-    D = 30
-    x_ = np.array(x_)
+
+from Petri_test import sigmoid, Funvtion
+
+
+def fit_fun(x_,D):  # 适应函数
+    return Funvtion(x_)
+
+    """
+    result = 0.
+    xx= np.copy(x_)
+    for i in range(D):
+        w = [0., 0.2, 0.5, 0.3, 0.4, 0.6]
+        u = [0., 0.7, 0.9, 0.6, 0.8, 0.7]
+        t = [0., 0.3, 0.4, 0.2, 0.5, 0.4]
+
+        p1 = 0.9
+        p4 = 0.9
+        p5 = 0.9
+        p7 = 0.9
+        b = 5000
+        # t[4] = x_[0]
+        ww = copy.deepcopy(w)
+        uu = copy.deepcopy(u)
+        tt = copy.deepcopy(t)
+        if(i<5):
+            w = [0., 0.2, 0.5, 0.3, 0.4, 0.6]
+
+            w[i + 1] = xx[i] + 0.0
+            p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+            p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+            x1 = p9
+            x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+            # p3 = max(x1, x2)
+            p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+            x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+            p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+            x4 = p6 * w[4] + p7 * w[5]
+            p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+            result += (p8 - 0.603792) ** 2
+            # result +=(p8 - 0.568015203115994)**2
+        elif i<10:
+            u[i+1-5] = xx[i]+0.0
+            p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+            p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+            x1 = p9
+            x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+            # p3 = max(x1, x2)
+            p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+            x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+            p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+            x4 = p6 * w[4] + p7 * w[5]
+            p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+            result += (p8 - 0.568015203115994) ** 2
+        else:
+            t[i + 1-10] = xx[i] + 0.0
+            p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+            p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+            x1 = p9
+            x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+            # p3 = max(x1, x2)
+            p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+            x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+            p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+            x4 = p6 * w[4] + p7 * w[5]
+            p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+            # result += (p8 - 0.568015203115994) ** 2
+            # result += (p8 - 0.603792) ** 2
+            # pass
+
+    return result
+    """
+
+
+    # x_ = np.array(x_)
     # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
     # return np.linalg.norm(x_) ** 2  # np.linalg.norm(求范数)   **乘方
     # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
-    # return np.linalg.norm(x_, ord=np.Inf)    #F4
+    return np.linalg.norm(x_, ord=np.Inf)    #F4
+
+    # return 0;
     '''result = 0.
     for n in range(D-1):
         result += 100*(x_[n+1]-x_[n]**2)**2+(x_[n]-1)**2
     return result  # F5'''
 
-    result =0.
+    # result =0.
     '''for n  in range(D):
         result+= np.abs(x_[n]+0.5)**2
 
@@ -43,12 +117,12 @@ def fit_fun(x_):  # 适应函数
     '''x_new1 = x_** 2
     return -20 * np.exp(-0.2 * np.sqrt((1 / D) * reduce(lambda x, y: x + y, x_new1))) - \
            np.exp((1 / D) * reduce(lambda x, y: x + y, np.cos(2 * np.pi * x_))) + 20 + np.e  # F10'''
-    x_new1 = x_ ** 2
-    result = 1
-    for n in range(D):
-         result*=np.cos(x_[n]/np.sqrt(n+1))
-
-    return 1/4000*reduce(lambda x, y: x + y,x_new1)-result+1#F11
+    # x_new1 = x_ ** 2
+    # result = 1
+    # for n in range(D):
+    #      result*=np.cos(x_[n]/np.sqrt(n+1))
+    #
+    # return 1/4000*reduce(lambda x, y: x + y,x_new1)-result+1#F11
 
 
     '''A = np.zeros((2, 25))
@@ -71,7 +145,7 @@ class Particle:
         self.__pos = [random.uniform(-x_max, x_max) for i in range(dim)]  # 粒子的位置
         self.__vel = [random.uniform(-max_vel, max_vel) for i in range(dim)]  # 粒子的速度
         self.__bestPos = [0.0 for i in range(dim)]  # 粒子最好的位置
-        self.__fitnessValue = fit_fun(self.__pos)  # 适应度函数值
+        self.__fitnessValue = fit_fun(self.__pos,dim)  # 适应度函数值
 
     def set_pos(self, i, value):
         self.__pos[i] = value
@@ -143,7 +217,7 @@ class PSO:
         for i in range(self.dim):
             pos_value = part.get_pos()[i] + part.get_vel()[i]
             part.set_pos(i, pos_value)
-        value = fit_fun(part.get_pos())
+        value = fit_fun(part.get_pos(),self.dim)
         if value < part.get_fitness_value():
             part.set_fitness_value(value)
             for i in range(self.dim):
@@ -154,34 +228,38 @@ class PSO:
                 self.set_bestPosition(i, part.get_pos()[i])
 
     def update(self):
+        list_x = []
         for i in range(self.iter_num):
             for part in self.Particle_list:
                 self.update_vel(part)  # 更新速度
                 self.update_pos(part)  # 更新位置
             self.fitness_val_list.append(self.get_bestFitnessValue())  # 每次迭代完把当前的最优适应度存到列表
-        return self.fitness_val_list, self.get_bestPosition()
+
+            list_x.append(self.get_bestPosition())
+
+        # print(list_x)
+        return self.fitness_val_list,list_x
+        # return self.fitness_val_list, self.get_bestPosition()
 
 
-def function_PSO():
-    dim = 30
-    size = 30
-    iter_num = 500
-    x_max = 600
-    max_vel = 0.5  # 粒子最大的速度
+def function_PSO(dim, size, iter_num, x_max, max_vel):
+    # dim = 5
+    # size = 50
+    # iter_num = 200
+    # x_max = 1
+    # max_vel = 0.5  # 粒子最大的速度
     pso = PSO(dim, size, iter_num, x_max, max_vel)
-    fit_var_list1, best_pos1 = pso.update()
-    return fit_var_list1
+    fit_var_list1, position_list = pso.update()
+    return fit_var_list1,position_list
 
 if __name__ == "__main__":
-    T = 10
+    T = 1
     t = np.zeros(T)
     value = np.zeros(T)
-    for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数  bound
-
-        fit_var_list1 =  function_PSO()
-
+    for i in range(T):  ## 问题维数 群体大小 最大吸引度 光吸收系数 步长因子 最大代数
+        PSO_y,PSO_position = function_PSO(5,50,200,1,0.5)
         # print("PSO最优位置:" + str(best_pos1))
-        value[i] = fit_var_list1[-1]
+        value[i] = PSO_y[-1]
         print(i,"i",value[i])
         # print("PSO最优解:" + str(fit_var_list1[-1]))
     print("平均值：", np.average(value))

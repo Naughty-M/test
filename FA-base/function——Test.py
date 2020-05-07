@@ -22,17 +22,6 @@ def FitnessFunction( x_,D):
     return 418.9828 * D - reduce(lambda x, y: x + y, x_new)  # F8=cannot
 
 if __name__ == '__main__':
-    a = [0]*500
-    b = [0]*500
-
-    for i in range(500):
-        a[i]  =i**2
-        b[i] = i
-    # plt.legend(handles=[a], labels=['鼠标的年销量'])
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.plot(a,b,label="OCSFA")
-    plt.legend()
-    # plt.plot(a,b,label=)
-    plt.show()
+    T = 10
+    jutivalue = np.zeros((T,    5))
+    print(jutivalue)
