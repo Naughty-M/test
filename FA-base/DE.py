@@ -245,6 +245,7 @@ def DE(NP, F, CR, generation, len_x, value_up_range, value_down_range):
             xx.append(object_function(np_list[i]))
         min_f.append(min(xx))
         min_x.append(np_list[xx.index(min(xx))])
+        print("DE---i==",i)
     # 输出
 
     min_ff = min(min_f)  #最小适应度值

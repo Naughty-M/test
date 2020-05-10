@@ -82,7 +82,7 @@ def fit_fun(x_,D):  # 适应函数
     # X[1,:]是取第1维中下标为1的元素的所有数据，第1行（从0开始）
     # return np.linalg.norm(x_) ** 2  # np.linalg.norm(求范数)   **乘方
     # return np.linalg.norm(x_, ord=1) + abs(np.prod(x_))   #F2   搞不得
-    return np.linalg.norm(x_, ord=np.Inf)    #F4
+    # return np.linalg.norm(x_, ord=np.Inf)    #F4
 
     # return 0;
     '''result = 0.
@@ -142,7 +142,7 @@ def fit_fun(x_,D):  # 适应函数
 class Particle:
     # 初始化
     def __init__(self, x_max, max_vel, dim):
-        self.__pos = [random.uniform(-x_max, x_max) for i in range(dim)]  # 粒子的位置
+        self.__pos = [random.uniform(0, x_max) for i in range(dim)]  # 粒子的位置
         self.__vel = [random.uniform(-max_vel, max_vel) for i in range(dim)]  # 粒子的速度
         self.__bestPos = [0.0 for i in range(dim)]  # 粒子最好的位置
         self.__fitnessValue = fit_fun(self.__pos,dim)  # 适应度函数值
@@ -235,9 +235,12 @@ class PSO:
                 self.update_pos(part)  # 更新位置
             self.fitness_val_list.append(self.get_bestFitnessValue())  # 每次迭代完把当前的最优适应度存到列表
 
-            list_x.append(self.get_bestPosition())
 
+            list_x.append(copy.deepcopy(self.get_bestPosition()))
+            # print("grtthe best position",self.get_bestPosition())
+            print("PSO---i==",i)
         # print(list_x)
+        print(list_x)
         return self.fitness_val_list,list_x
         # return self.fitness_val_list, self.get_bestPosition()
 

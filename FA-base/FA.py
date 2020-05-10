@@ -51,20 +51,20 @@ class FA:
     def initial(self):
         return (self.bound[1] - self.bound[0]) * np.random.random([self.N, self.D]) + self.bound[0]  # 我觉得是初始化
 
-    def adjust_alphat(self, t, i, j):
-        if self.DistanceBetweenIJ(i, j) < self.alpha:
-            self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))  # 自适应步长
-        else:
-            self.alpha = 0.95
+    # def adjust_alphat(self, t, i, j):
+    #     if self.DistanceBetweenIJ(i, j) < self.alpha:
+    #         self.alpha = 0.4 / (1 + np.math.exp(0.015 * (t - self.T) / 3))  # 自适应步长
+    #     else:
+    #         self.alpha = 0.95
 
     def t_adjust_alphat(self, t):  # 只有代数的步长策略
         # self.alpha = self.alpha**2  # 自适应步长
         # self.alpha *= random.random()
         # self.alpha = np.exp(-t / self.T) * self.alpha
-        self.alpha = 0.97 / (1 + np.math.exp(0.015 * (t - self.T) / 3))*self.alpha # 自适应步长
+        # self.alpha = self.alpha / (1 + np.math.exp(0.015 * (t - self.T) ))*self.alpha # 自适应步长
 
-        # a = math.e**(t/self.T)
-        # self.alpha*= 1.0/(a + a*self.alpha) #论文用
+        a = math.e**(t/self.T)
+        self.alpha*= 1.0/(a + a*self.alpha) #论文用
 
 
         # self.alpha = (1 - t / self.T) * self.alpha
@@ -155,7 +155,7 @@ class FA:
                         o %= self.bound[1] - self.bound[0]
                     x_[n] = np.copy(o)
 
-                if (self.FitnessFunction(x_) < self.FitnessFunction((self.X[i]))):
+                if (self.FitnessFunction(x_) < self.FitnessFunction(self.X[i,:])):
                     self.X[i, :] = np.copy(x_)
                 else:
                     x_ = np.copy(self.X[i, :])
@@ -238,8 +238,12 @@ class FA:
             # print(np.array(self.alpha), "步长")
             # print(self.X[self.sortList[0]])
             plot_Fa.append(self.FitnessValue.min())
-            FA_position.append(self.X[sort_list[0]])
+            oo = self.X[sort_list[0]]
+            FA_position.append(oo.tolist())
+            # print(oo.tolist())
+
             # print("tttttttttt",t)
+            # print(FA_position)
         return plot_Fa,FA_position
 
     def FitnessFunction(self, x_):

@@ -5,7 +5,14 @@ import numpy as np
 
 
 def sigmoid(x, b, k):
-    return 1 / (1 + math.e ** (-b * (x - k)))
+    try:
+        result = 1 / (1 + math.e ** (-b * (x - k)))
+        return result
+    except OverflowError:
+        if(x>k):
+            return 1.0
+        else:
+            return 0.0
 
 
 def MSE(x1, x2):
@@ -42,15 +49,18 @@ def Funvtion(position):
     # u = [0] + [0.6860, 0.8136, 0.6457, 0.8440, 0.7105, 2.36121]
     # t = [0] + [0.2796, 0.4419, 0.3009, 0.4814, 0.4240, 2.65551]
     D = len(position)
-    input_list = [[0.9, 0.9, 0.9, 0.9], [0.8, 0.8, 0.8, 0.8], [0.7, 0.7, 0.7, 0.7],
-                [0.8, 0.9, 0.9, 0.9], [0.9, 0.8, 0.9, 0.9], [0.7, 0.7, 0.9, 0.9],
-                [0.9, 0.9, 0.8, 0.8], [0.9, 0.8, 0.6, 0.9], [0.7, 0.6, 0.8, 0.8],
-                [0.9, 0.8, 0.7, 0.6]]
-    b = 100
+    # input_list = [[0.9,0.9,0.9,0.9],[0.8,0.8,0.8,0.8],[0.7,0.7,0.7,0.7],
+    #               [0.8,0.9,0.9,0.9],[0.9,0.8,0.9,0.9],[0.7,0.7,0.9,0.9],
+    #               [0.9,0.9,0.8,0.8],[0.9,0.8,0.6,0.9],[0.7,0.6,0.8,0.8],
+    #               [0.9,0.8,0.7,0.6],[0.5,0.3,0.4,0.8],[0.2,0.8,0.7,0.3],
+    #               [0.5,0.4,0.6,0.8],[0.2,0.6,0.7,0.8],[0.5,0.4,0.9,0.8]]
+    input_list = [[0.9,0.9,0.9,0.9],[0.2,0.8,0.5,0.8],[0.4,0.7,0.6,0.7],
+                  [0.8,0.4,0.2,0.9],[0.9,0.5,0.4,0.9],[0.3,0.7,0.5,0.9]]
+    b = 10
     result = 0
     # w= [0]+[0.02253573 ,0.35688365, 0.12253573, 0.3366199,  0.54321143]
-    for  x in range(0,len(input_list)):
-
+    # for  x in range(0,len(input_list)):
+    for x in range(0,5):
         p1 = input_list[x][0]
         p4 = input_list[x][1]
         p5 = input_list[x][2]
@@ -63,7 +73,6 @@ def Funvtion(position):
             u = [0., 0.7, 0.9, 0.6, 0.8, 0.7]
             t = [0., 0.3, 0.4, 0.2, 0.5, 0.4]
             if (i < 5):
-                w = [0., 0.2, 0.5, 0.3, 0.4, 0.6]
                 w[i + 1] = position[i] + 0.0
                 p9 = p1 * u[1] * sigmoid(p1, b, t[1])
                 p2 = p1 * u[2] * sigmoid(p1, b, t[2])
@@ -76,33 +85,34 @@ def Funvtion(position):
                 x4 = p6 * w[4] + p7 * w[5]
                 p8 = x4 * u[5] * sigmoid(x4, b, t[5])
                 result += (p8 - getthep8) ** 2
-                # result +=(p8 - 0.568015203115994)**2
-            # elif i < 10:
-            #     u[i + 1 - 5] = position[i] + 0.0
-            #     p9 = p1 * u[1] * sigmoid(p1, b, t[1])
-            #     p2 = p1 * u[2] * sigmoid(p1, b, t[2])
-            #     x1 = p9
-            #     x2 = p2 * u[3] * sigmoid(p2, b, t[3])
-            #     # p3 = max(x1, x2)
-            #     p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
-            #     x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
-            #     p6 = x3 * u[4] * sigmoid(x3, b, t[4])
-            #     x4 = p6 * w[4] + p7 * w[5]
-            #     p8 = x4 * u[5] * sigmoid(x4, b, t[5])
-            #     result += (p8 - 0.568015203115994) ** 2
-            # else:
-            #     t[i + 1 - 10] = position[i] + 0.0
-            #     p9 = p1 * u[1] * sigmoid(p1, b, t[1])
-            #     p2 = p1 * u[2] * sigmoid(p1, b, t[2])
-            #     x1 = p9
-            #     x2 = p2 * u[3] * sigmoid(p2, b, t[3])
-            #     # p3 = max(x1, x2)
-            #     p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
-            #     x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
-            #     p6 = x3 * u[4] * sigmoid(x3, b, t[4])
-            #     x4 = p6 * w[4] + p7 * w[5]
-            #     p8 = x4 * u[5] * sigmoid(x4, b, t[5])
-        # print(p8-getthep8)
+
+            elif i < 10:
+                u[i + 1 - 5] = position[i] + 0.0
+                p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+                p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+                x1 = p9
+                x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+                # p3 = max(x1, x2)
+                p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+                x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+                p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+                x4 = p6 * w[4] + p7 * w[5]
+                p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+                result += (p8 - getthep8) ** 2
+            else:
+                t[i + 1 - 10] = position[i] + 0.0
+                p9 = p1 * u[1] * sigmoid(p1, b, t[1])
+                p2 = p1 * u[2] * sigmoid(p1, b, t[2])
+                x1 = p9
+                x2 = p2 * u[3] * sigmoid(p2, b, t[3])
+                # p3 = max(x1, x2)
+                p3 = x1 * sigmoid(x1, b, x2) + x2 * sigmoid(x1, b, x2)
+                x3 = p4 * w[1] + p3 * w[2] + p5 * w[3]
+                p6 = x3 * u[4] * sigmoid(x3, b, t[4])
+                x4 = p6 * w[4] + p7 * w[5]
+                p8 = x4 * u[5] * sigmoid(x4, b, t[5])
+                result += (p8 - getthep8) ** 2
+        # # print(p8-g)
     return  result
 
 def return_p8(list_data):
@@ -116,7 +126,7 @@ def return_p8(list_data):
     p4 = list_data[1]
     p5 = list_data[2]
     p7 = list_data[3]
-    b = 100
+    b = 10
     p9 = p1 * u[1] * sigmoid(p1, b, t[1])
     # print(p9,"P_9")
     p2 = p1 * u[2] * sigmoid(p1, b, t[2])
@@ -134,12 +144,13 @@ def return_p8(list_data):
 if __name__ == "__main__":
     # print(Funvtion([]))
 
-    list_data = [0.9,0.9,0.9,0.9]
+    # list_data = [0.9,0.9,0.9,0.9]
 
     set_list= [[0.9,0.9,0.9,0.9],[0.8,0.8,0.8,0.8],[0.7,0.7,0.7,0.7],
                [0.8,0.9,0.9,0.9],[0.9,0.8,0.9,0.9],[0.7,0.7,0.9,0.9],
                [0.9,0.9,0.8,0.8],[0.9,0.8,0.6,0.9],[0.7,0.6,0.8,0.8],
-               [0.9,0.8,0.7,0.6]] #样本
+               [0.9,0.8,0.7,0.6],[0.5,0.3,0.4,0.8],[0.2,0.8,0.7,0.3],
+               [0.5,0.4,0.6,0.8],[0.2,0.6,0.7,0.8],[0.5,0.4,0.9,0.8]] #样本
 
     x = [0.2,0.4,0.6,0.8,0.5]
     print(Funvtion(x))

@@ -22,6 +22,5 @@ def FitnessFunction( x_,D):
     return 418.9828 * D - reduce(lambda x, y: x + y, x_new)  # F8=cannot
 
 if __name__ == '__main__':
-    T = 10
-    jutivalue = np.zeros((T,    5))
-    print(jutivalue)
+    list= [0.14540498390483736, 0.5704281973893393, 0.376368173632254, 0.37443397100987813, 0.6027774925633882]
+    print(list[3::-1])
